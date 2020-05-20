@@ -2,6 +2,7 @@ from functools import wraps
 from flask import Flask, request, render_template, redirect, url_for, flash, session,jsonify
 from flask_cors import CORS
 from flask_sqlalchemy import SQLAlchemy
+from flask_mail import Mail,Message
 from sqlalchemy import and_, or_
 import re
 
@@ -11,7 +12,16 @@ app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = True
 app.secret_key = '\xc9ixnRb\xe40\xd4\xa5\x7f\x03\xd0y6\x01\x1f\x96\xeao+\x8a\x9f\xe4'
 cors = CORS(app, resources={r"/*": {"origins": "*"}})
 db = SQLAlchemy(app)
+mail = Mail(app)
 
+#Mail config
+app.config['MAIL_SERVER'] = 'smtp.qq.com'
+app.config['MAIL_PORT'] = 465
+app.config['MAIL_USE_SSL'] = True
+app.config['MAIL_USE_TLS'] = False 
+app.config['MAIL_USERNAME'] = '2300776402@qq.com'
+app.config['MAIL_PASSWORD'] = 'ndfzggfkdkgudjia'
+app.config['MAIL_DEFAULT_SENDER'] = 'norgannon'
 
 ############################################
 # 数据库
@@ -76,6 +86,16 @@ def valid_regist(username, password1, password2, email):
     else:
         return True
 
+#发送邮件(异步)
+def _send_async_mail(app, message):
+    with app.app_context():
+        mail.send(message)
+ 
+def send_async_mail(subject, to ,body):
+    message = Message(subject, recipients=[to],body=body)
+    thread = Thread(target=_send_async_mail, args=[app, message])
+    thread.start()
+    return thread
 ############################################
 # 路由
 ############################################
@@ -170,6 +190,27 @@ def info():
     print(response)
     return jsonify(response)
 
+#发送安全代码验证邮件
+@app.route('/verification', methods=['GET','POST'])
+def info():
+    response={}
+    error = None
+    message=''
+    if request.method == 'POST':
+        j_data=request.json
+        code=j_data.get("code")
+        email=j_data.get("email")
+        try:
+            send_async_mail("技术分享博客网站账户安全代码",email,"安全代码:"+code)
+            message= '发送成功，请注意查收~'
+        except Exception as e:
+            print(e)
+            message='发送失败'
+    response={
+         'message':message
+    }    
+    print(response)
+    return jsonify(response)
 
 if __name__ == '__main__':
     app.run(debug = True)
