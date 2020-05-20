@@ -1,4 +1,3 @@
-
 from functools import wraps
 from flask import Flask, request, render_template, redirect, url_for, flash, session,jsonify
 from flask_cors import CORS
@@ -24,13 +23,22 @@ db = SQLAlchemy(app)
 # __repr__方法告诉Python如何打印class对象，方便我们调试使用
 class User(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    username = db.Column(db.String(80), unique=True)
-    password = db.Column(db.String(80))
-    email = db.Column(db.String(120), unique=True)
+    username = db.Column(db.String(30), unique=True)
+    password = db.Column(db.String(30))
+    email = db.Column(db.String(20), unique=True)
 
     def __repr__(self):
         return '<User %r>' % self.username
         
+class Info(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    username = db.Column(db.String(80), unique=True)
+    sex = db.Column(db.String(10))
+    old = db.Column(db.Integer)
+    email = db.Column(db.String(120), unique=True)
+
+    def __repr__(self):
+        return '<Info %r>' % self.username
 
 # 创建表格、插入数据
 @app.before_first_request
@@ -106,14 +114,11 @@ def regist():
         p1=j_data.get("password1")
         p2=j_data.get("password2")
         em=j_data.get("email")
-        an=re.search("^[a-zA-Z0-9_.-]+@[a-zA-Z0-9-]+(\.[a-zA-Z0-9-]+)*\.[a-zA-Z0-9]{2,6}$",em)
-        if an == None:
-            message='请输入合法的邮箱!'
-        elif p1!=p2:
-            message='两次输入的密码不一致!'
-        elif valid_regist(uname, p1, p2, em):
+        if valid_regist(uname, p1, p2, em):
             user=User(username=uname, password=p1, email=em)
+            info=Info(username=uname, email=em, sex="", old="")
             db.session.add(user)
+            db.session.add(info)
             db.session.commit()
             message='注册成功!'
         else:
@@ -122,7 +127,48 @@ def regist():
     print(response)
     return jsonify(response)
 
-
+# 4.读取用户个人信息
+@app.route('/getinfo', methods=['GET','POST'])
+def getinfo():
+    response={}
+    error = None
+    if request.method == 'POST':
+        j_data=request.json
+        uname=j_data.get("username")
+        info = Info.query.filter(Info.username == uname).first()
+    response={
+         'name':info.username,
+         'sex':info.sex,
+         'old':info.old,
+         'email':info.email
+    }    
+    #print(response.email)
+    print(response)
+    return jsonify(response)
+#更新用户个人信息
+@app.route('/info', methods=['GET','POST'])
+def info():
+    response={}
+    error = None
+    if request.method == 'POST':
+        j_data=request.json
+        uname=j_data.get("username")
+        age=j_data.get("age")
+        sex=j_data.get("sex")
+        tmp = Info.query.filter(Info.username == uname).update({"old":age,"sex":sex})
+        db.session.commit()
+        info = Info.query.filter(Info.username == uname).first()
+        print("here")
+        print(info)
+        print("here")
+    response={
+         'name':info.username,
+         'sex':info.sex,
+         'old':info.old,
+         'email':info.email
+    }    
+    print(response)
+    return jsonify(response)
 
 
 if __name__ == '__main__':

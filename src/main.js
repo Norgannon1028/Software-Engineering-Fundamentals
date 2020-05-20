@@ -16,5 +16,11 @@ Vue.use(ElementUI);
 
 new Vue({
   router,
+  data: function() {
+    return {
+      //loginflag: false,
+      //username: ""
+    };
+  },
   render: h => h(App)
 }).$mount("#app");

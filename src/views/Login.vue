@@ -29,6 +29,7 @@
 <script>
 import axios from "axios";
 import Navigator from "@/components/Navigator.vue";
+import global from "@/components/global.vue";
 export default {
   name: "Login",
   components: {
@@ -50,8 +51,18 @@ export default {
         })
         .then(function(response) {
           alert(response.data.msg);
-          if (response.data.msg == "登录成功!")
-            that.$router.push({ path: "/home" });
+          if (response.data.msg == "登录成功!") {
+            //alert(Navigator.username );
+            global.loginflag = true;
+            global.username = that.uname;
+            //alert(Navigator.username );
+            //this.forceUpdate();
+            //this.$root.username = that.uname;
+            //this.$root.loginflag = true;
+            that.$router.push({
+              path: "/home"
+            });
+          }
         })
         .catch(function(error) {
           alert(error);

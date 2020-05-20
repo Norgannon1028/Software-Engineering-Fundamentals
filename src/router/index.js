@@ -3,6 +3,7 @@ import VueRouter from "vue-router";
 import Home from "../views/Home.vue";
 import Login from "../views/Login.vue";
 import Signup from "../views/Signup.vue";
+import Info from "../views/Info.vue";
 Vue.use(VueRouter);
 
 const routes = [
@@ -27,12 +28,17 @@ const routes = [
     name: "Signup",
     component: Signup
   },
-  // 在添加组件时再引用vue文件使用
   {
-    path: "/test",
-    name: "Test",
-    component: () => import("../views/Test.vue")
+    path: "/info",
+    name: "Info",
+    component: Info
   },
+  // 在添加组件时再引用vue文件使用
+  // {
+  //   path: "/test",
+  //   name: "Test",
+  //   component: () => import("../views/Test.vue")
+  // },
   // 同上，不过此时需要有一个id的参数才能显示，参数可获取
   {
     path: "/result/:id",

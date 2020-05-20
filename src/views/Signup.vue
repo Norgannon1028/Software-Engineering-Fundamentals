@@ -1,45 +1,14 @@
 <template>
   <div class="signup">
     <Navigator return="signup" />
-    <div style="margin-top: 15px;">
-      用户名：<el-input
-        placeholder="username"
-        v-model="uname"
-        style="width:60%"
-        class="input-with-select"
-      ></el-input>
-      <br />
-      <br />
-      密码：<el-input
-        placeholder="password"
-        v-model="passwd1"
-        style="width:60%"
-        class="input-with-select"
-      ></el-input>
-      <br />
-      <br />
-      重复密码：<el-input
-        placeholder="password"
-        v-model="passwd2"
-        style="width:60%"
-        class="input-with-select"
-      ></el-input>
-      <br />
-      <br />
-      邮箱：<el-input
-        placeholder="e-mail"
-        v-model="email"
-        style="width:60%"
-        class="input-with-select"
-      ></el-input>
-      <br />
-      <br />
-      <el-button type="primary" icon="el-icon-remove" @click="test_ajax"
-        >注册
-      </el-button>
-    </div>
     <div>
-      <el-form :model="regist_form" :rules="rules" ref="regist_form" label-width="100px" class="signup">
+      <el-form
+        :model="regist_form"
+        :rules="rules"
+        ref="regist_form"
+        label-width="100px"
+        class="signup"
+      >
         <el-form-item label="用户名" prop="uname">
           <el-input v-model="regist_form.uname"></el-input>
         </el-form-item> 
@@ -113,7 +82,12 @@ export default {
     test_ajax() {
       var that = this;
       axios
-        .post("http://localhost:5000/regist", that.regist_form)
+        .post("http://localhost:5000/regist", {
+          username: that.regist_form.uname,
+          password1: that.regist_form.passwd1,
+          password2: that.regist_form.passwd2,
+          email: that.regist_form.email
+        })
         .then(function(response) {
           alert(response.data.msg);
           if (response.data.msg == "注册成功!")
@@ -124,8 +98,8 @@ export default {
         });
     },
     resetForm(formName) {
-        this.$refs[formName].resetFields();
-      }
+      this.$refs[formName].resetFields();
+    }
   }
 };
 </script>

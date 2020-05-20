@@ -8,14 +8,22 @@
       text-color="#fff"
       active-text-color="#ffd04b"
     >
-      <el-menu-item index="home" @click="toHome">
+      <el-menu-item index="home" @click="toHome" >
         首页
       </el-menu-item>
-      <el-menu-item>vue-teach</el-menu-item>
-      <el-menu-item style="float:right" index="signup" @click="toSignup">
+      <el-menu-item style="float:right" index="dropout" @click="drop" v-if="loginflag == true"
+        >注销</el-menu-item
+      >
+      <el-menu-item style="float:right" index="info" @click="toInfo" v-if="loginflag == true"
+        >个人信息</el-menu-item
+      >
+      <el-menu-item style="float:right" v-if="loginflag == true"
+        >欢迎:{{ username }}</el-menu-item
+      >
+      <el-menu-item style="float:right" index="signup" @click="toSignup" v-if="loginflag == false">
         注册
       </el-menu-item>
-      <el-menu-item style="float:right" index="login" @click="toLogin">
+      <el-menu-item style="float:right" index="login" @click="toLogin" v-if="loginflag == false">
         登录
       </el-menu-item>
     </el-menu>
@@ -23,6 +31,7 @@
 </template>
 
 <script>
+import global from '@/components/global.vue';
 export default {
   name: "Navigator",
   props: {
@@ -31,7 +40,11 @@ export default {
   data() {
     return {
       //returnType: this.return === "true" ? true : false,
-      activeIndex: this.return
+      activeIndex: this.return,
+      username: global.username,
+      loginflag: global.loginflag
+      // loginflag: this.$root.loginflag,
+      // username: this.$root.username
     };
   },
   methods: {
@@ -43,6 +56,14 @@ export default {
     },
     toLogin() {
       this.$router.push({ path: "/login" });
+    },
+    toInfo() {
+      this.$router.push({ path: "/info" });
+    },
+    drop(){
+      global.username="",
+      global.loginflag=false,
+      this.toHome()
     }
   }
 };
