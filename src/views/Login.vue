@@ -12,6 +12,7 @@
       <br />
       密码:
       <el-input
+        type="password"
         placeholder="password"
         v-model="passwd"
         style="width:60%"

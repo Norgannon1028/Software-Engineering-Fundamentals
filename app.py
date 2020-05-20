@@ -5,6 +5,7 @@ from flask_sqlalchemy import SQLAlchemy
 from flask_mail import Mail,Message
 from sqlalchemy import and_, or_
 import re
+from threading import Thread
 
 app = Flask(__name__,template_folder="src/views")
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite://'
@@ -12,7 +13,7 @@ app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = True
 app.secret_key = '\xc9ixnRb\xe40\xd4\xa5\x7f\x03\xd0y6\x01\x1f\x96\xeao+\x8a\x9f\xe4'
 cors = CORS(app, resources={r"/*": {"origins": "*"}})
 db = SQLAlchemy(app)
-mail = Mail(app)
+
 
 #Mail config
 app.config['MAIL_SERVER'] = 'smtp.qq.com'
@@ -21,8 +22,8 @@ app.config['MAIL_USE_SSL'] = True
 app.config['MAIL_USE_TLS'] = False 
 app.config['MAIL_USERNAME'] = '2300776402@qq.com'
 app.config['MAIL_PASSWORD'] = 'ndfzggfkdkgudjia'
-app.config['MAIL_DEFAULT_SENDER'] = 'norgannon'
-
+app.config['MAIL_DEFAULT_SENDER'] = '2300776402@qq.com'
+mail = Mail(app)
 ############################################
 # 数据库
 ############################################
@@ -96,6 +97,10 @@ def send_async_mail(subject, to ,body):
     thread = Thread(target=_send_async_mail, args=[app, message])
     thread.start()
     return thread
+#发送邮件(同步)
+def send_mail(subject, to, body):
+    message = Message(subject, recipients=[to], body=body)
+    mail.send(message)
 ############################################
 # 路由
 ############################################
@@ -192,7 +197,7 @@ def info():
 
 #发送安全代码验证邮件
 @app.route('/verification', methods=['GET','POST'])
-def info():
+def verify():
     response={}
     error = None
     message=''
@@ -200,8 +205,10 @@ def info():
         j_data=request.json
         code=j_data.get("code")
         email=j_data.get("email")
+        print(code)
+        print(email)
         try:
-            send_async_mail("技术分享博客网站账户安全代码",email,"安全代码:"+code)
+            send_mail("技术分享博客网站账户安全代码",email,"安全代码:"+str(code))
             message= '发送成功，请注意查收~'
         except Exception as e:
             print(e)

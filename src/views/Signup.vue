@@ -20,6 +20,10 @@
         </el-form-item>
         <el-form-item label="邮箱" prop="email">
           <el-input v-model="regist_form.email"></el-input>
+          <el-button type="primary" :disabled="send_status" @click="verify">{{send_message}}</el-button>
+        </el-form-item>
+        <el-form-item label="验证码" prop="code">
+          <el-input v-model="regist_form.code"></el-input>
         </el-form-item>
         <el-form-item>
           <el-button type="primary" @click="test_ajax()">注册</el-button>
@@ -49,12 +53,20 @@ export default {
           callback();
         }
       };
+      var checkcode = (rule, value, callback) => {
+        if (value !== this.code) {
+          callback(new Error('验证码错误'));
+        } else {
+          callback();
+        }
+      };
     return {
       regist_form:{
         uname: "",
         passwd1: "",
         passwd2: "",
-        email: ""
+        email: "",
+        code:""
       },
       rules:{
         uname:[
@@ -73,9 +85,15 @@ export default {
         email:[
           { required: true, message: '请输入邮箱地址', trigger: 'blur' },
           { type: 'email', message: '请输入正确的邮箱地址', trigger: ['blur', 'change'] }
+        ],
+        code:[
+          { required: true, message: '请输入验证码', trigger: 'blur' },
+          { validator: checkcode, trigger: 'change'  }
         ]
-      }
-      
+      },
+      send_status:false,
+      send_message:"获取验证码",
+      code:-1
     };
   },
   methods: {
@@ -97,9 +115,29 @@ export default {
           alert(error);
         });
     },
+    verify(){
+      var that=this;
+      that.code=Math.floor(Math.random() * (999999 - 100000) + 100000);
+      axios
+        .post("http://localhost:5000/verification", {
+          email: that.regist_form.email,
+          code:that.code
+        })
+        .then(function(response) {
+          if (response.data.msg == "发送成功，请注意查收~")
+            that.send_status=true;
+            that.send_message="已发送";
+        })
+        .catch(function(error) {
+          alert(error);
+        });
+    },
     resetForm(formName) {
       this.$refs[formName].resetFields();
-    }
+    },
+    randomNum(min, max) {
+        return Math.floor(Math.random() * (max - min) + min)
+      },
   }
 };
 </script>
