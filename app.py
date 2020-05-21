@@ -8,7 +8,7 @@ import re
 from threading import Thread
 
 app = Flask(__name__,template_folder="src/views")
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite://'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///Blog.db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = True
 app.secret_key = '\xc9ixnRb\xe40\xd4\xa5\x7f\x03\xd0y6\x01\x1f\x96\xeao+\x8a\x9f\xe4'
 cors = CORS(app, resources={r"/*": {"origins": "*"}})
@@ -33,6 +33,7 @@ mail = Mail(app)
 # 字段使用db.Column类创建实例，字段的类型作为参数，另外还提供一些其他可选参数
 # __repr__方法告诉Python如何打印class对象，方便我们调试使用
 class User(db.Model):
+    __tablename__ = 'User'
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(30), unique=True)
     password = db.Column(db.String(30))
@@ -42,6 +43,7 @@ class User(db.Model):
         return '<User %r>' % self.username
         
 class Info(db.Model):
+    __tablename__='Info'
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(80), unique=True)
     sex = db.Column(db.String(10))
@@ -54,18 +56,18 @@ class Info(db.Model):
 # 创建表格、插入数据
 @app.before_first_request
 def create_db():
-    db.drop_all()  # 每次运行，先删除再创建
+    #db.drop_all()  # 每次运行，先删除再创建
     db.create_all()
     
-    admin = User(username='admin', password='root', email='admin@example.com')
-    db.session.add(admin)
+    #admin = User(username='admin', password='root', email='admin@example.com')
+    #db.session.add(admin)
 
-    guestes = [User(username='guest1', password='guest1', email='guest1@example.com'),
-               User(username='guest2', password='guest2', email='guest2@example.com'),
-               User(username='guest3', password='guest3', email='guest3@example.com'),
-               User(username='guest4', password='guest4', email='guest4@example.com')]
-    db.session.add_all(guestes)
-    db.session.commit()
+    #guestes = [User(username='guest1', password='guest1', email='guest1@example.com'),
+    #           User(username='guest2', password='guest2', email='guest2@example.com'),
+    #           User(username='guest3', password='guest3', email='guest3@example.com'),
+    #           User(username='guest4', password='guest4', email='guest4@example.com')]
+    #db.session.add_all(guestes)
+    #db.session.commit()
     
 
 ############################################
@@ -219,5 +221,22 @@ def verify():
     print(response)
     return jsonify(response)
 
+@app.route('/upload', methods=['GET','POST'])
+def up_photo():
+    print(request.data)
+    print(request.form)
+    print(request.files)
+    img = request.files.get('file')
+    path = "./src/assets/"
+    file_path = path+img.filename
+    img.save(file_path)
+    print('上传头像成功，上传的用户是：')
+    response={
+         'image_url':img.filename,
+         'code':0
+    } 
+    print(response)
+    return jsonify(response)
+    
 if __name__ == '__main__':
     app.run(debug = True)

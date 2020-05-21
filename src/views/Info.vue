@@ -10,8 +10,17 @@
       <span> {{email}} </span>
       <br />
       <br />
+      <el-upload
+        class="avatar-uploader"
+        action="http://localhost:5000/upload"
+        :on-success="handleAvatarSuccess2"
+        :show-file-list="false"
+        :before-upload="beforeAvatarUpload">
+        <img v-if="image_url" :src="image_url" class="avatar">
+      <i v-else class="el-icon-plus avatar-uploader-icon"></i>
+      </el-upload>
       <span>性别:</span>
-      <span v-if="changeflag == false"> {{sex}} </span>
+      <span v-if="changeflag == false">{{image_url}} {{sex}} </span>
       <el-input
         placeholder="sex"
         v-model="sex"
@@ -65,6 +74,7 @@ export default {
       email: "",
       sex: "",
       age: "",
+      image_url:''
     };
   },
   mounted(){
@@ -118,7 +128,45 @@ export default {
     },
     resetForm() {
       this.changeflag = false;
-    }
+    },
+    handleAvatarSuccess(res, file) {
+        this.image_url= URL.createObjectURL(file.raw);
+        this.image_url=require(String(res.data.image_url));
+        print(this.image_url);
+      },
+      handleAvatarSuccess2(res, file) {// eslint-disable-line no-unused-vars
+        this.image_url=require(String(res.data.image_url));
+        print(this.image_url);
+      },
+      beforeAvatarUpload(file) {
+        const isJPG = file.type === 'image/jpeg';
+        const isLt2M = file.size / 1024 / 1024 < 2;
+
+        if (!isJPG) {
+          this.$message.error('上传头像图片只能是 JPG 格式!');
+        }
+        if (!isLt2M) {
+          this.$message.error('上传头像图片大小不能超过 2MB!');
+        }
+        return isJPG && isLt2M;
+      },
+      customUpload(fileobj) {
+        let param = new FormData()
+        param.append('files',fileobj.file)
+        var that = this;
+      axios
+        .post("http://localhost:5000/upload",param).then(res=>{
+          if(res.data.code != 0) {
+            alert('文件上传失败, code:' + res.data.code)
+          } else {
+            //that.image_url=res.data.image_url;
+            that.image_url=require("@/assets/"+res.data.image_url);
+          }
+        })
+        .catch(function(error) {
+          alert(error); 
+        });
+      },
   }
 };
 </script>
@@ -130,4 +178,27 @@ export default {
   margin: 5px;
   cursor: pointer;
 }
+.avatar-uploader .el-upload {
+    border: 1px dashed #d9d9d9;
+    border-radius: 6px;
+    cursor: pointer;
+    position: relative;
+    overflow: hidden;
+  }
+  .avatar-uploader .el-upload:hover {
+    border-color: #409EFF;
+  }
+  .avatar-uploader-icon {
+    font-size: 28px;
+    color: #8c939d;
+    width: 178px;
+    height: 178px;
+    line-height: 178px;
+    text-align: center;
+  }
+  .avatar {
+    width: 178px;
+    height: 178px;
+    display: block;
+  }
 </style>
