@@ -20,9 +20,9 @@ app.config['MAIL_SERVER'] = 'smtp.qq.com'
 app.config['MAIL_PORT'] = 465
 app.config['MAIL_USE_SSL'] = True
 app.config['MAIL_USE_TLS'] = False 
-app.config['MAIL_USERNAME'] = '2300776402@qq.com'
-app.config['MAIL_PASSWORD'] = 'ndfzggfkdkgudjia'
-app.config['MAIL_DEFAULT_SENDER'] = '2300776402@qq.com'
+app.config['MAIL_USERNAME'] =
+app.config['MAIL_PASSWORD'] =
+app.config['MAIL_DEFAULT_SENDER'] =
 mail = Mail(app)
 ############################################
 # 数据库
@@ -236,7 +236,7 @@ def up_photo():
          'code':0
     } 
     print(response)
-    return jsonify(response)
+    return response
     
 if __name__ == '__main__':
     app.run(debug = True)

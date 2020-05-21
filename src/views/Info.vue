@@ -13,7 +13,7 @@
       <el-upload
         class="avatar-uploader"
         action="http://localhost:5000/upload"
-        :on-success="handleAvatarSuccess2"
+        :on-success="handleAvatarSuccess"
         :show-file-list="false"
         :before-upload="beforeAvatarUpload">
         <img v-if="image_url" :src="image_url" class="avatar">
@@ -129,14 +129,10 @@ export default {
     resetForm() {
       this.changeflag = false;
     },
-    handleAvatarSuccess(res, file) {
+    handleAvatarSuccess(response,file) {
+        alert(response.data.code);
+        this.image_url=require('../assets/'+response.image_url);
         this.image_url= URL.createObjectURL(file.raw);
-        this.image_url=require(String(res.data.image_url));
-        print(this.image_url);
-      },
-      handleAvatarSuccess2(res, file) {// eslint-disable-line no-unused-vars
-        this.image_url=require(String(res.data.image_url));
-        print(this.image_url);
       },
       beforeAvatarUpload(file) {
         const isJPG = file.type === 'image/jpeg';
@@ -152,7 +148,7 @@ export default {
       },
       customUpload(fileobj) {
         let param = new FormData()
-        param.append('files',fileobj.file)
+        param.append('file',fileobj.file)
         var that = this;
       axios
         .post("http://localhost:5000/upload",param).then(res=>{
@@ -160,7 +156,7 @@ export default {
             alert('文件上传失败, code:' + res.data.code)
           } else {
             //that.image_url=res.data.image_url;
-            that.image_url=require("@/assets/"+res.data.image_url);
+            that.image_url=require('../assets/'+res.data.image_url);
           }
         })
         .catch(function(error) {
