@@ -20,9 +20,9 @@ app.config['MAIL_SERVER'] = 'smtp.qq.com'
 app.config['MAIL_PORT'] = 465
 app.config['MAIL_USE_SSL'] = True
 app.config['MAIL_USE_TLS'] = False 
-app.config['MAIL_USERNAME'] =
-app.config['MAIL_PASSWORD'] =
-app.config['MAIL_DEFAULT_SENDER'] =
+app.config['MAIL_USERNAME'] = '2300776402@qq.com'
+app.config['MAIL_PASSWORD'] = 'ndfzggfkdkgudjia'
+app.config['MAIL_DEFAULT_SENDER'] = '2300776402@qq.com'
 mail = Mail(app)
 ############################################
 # 数据库
@@ -38,25 +38,27 @@ class User(db.Model):
     username = db.Column(db.String(30), unique=True)
     password = db.Column(db.String(30))
     email = db.Column(db.String(20), unique=True)
+    sex = db.Column(db.String(10))
+    old = db.Column(db.Integer)
 
     def __repr__(self):
         return '<User %r>' % self.username
         
-class Info(db.Model):
-    __tablename__='Info'
-    id = db.Column(db.Integer, primary_key=True)
-    username = db.Column(db.String(80), unique=True)
-    sex = db.Column(db.String(10))
-    old = db.Column(db.Integer)
-    email = db.Column(db.String(120), unique=True)
+# class Info(db.Model):
+#     __tablename__='Info'
+#     id = db.Column(db.Integer, primary_key=True)
+#     username = db.Column(db.String(80), unique=True)
+#     sex = db.Column(db.String(10))
+#     old = db.Column(db.Integer)
+#     email = db.Column(db.String(120), unique=True)
 
-    def __repr__(self):
-        return '<Info %r>' % self.username
+#     def __repr__(self):
+#         return '<Info %r>' % self.username
 
 # 创建表格、插入数据
 @app.before_first_request
 def create_db():
-    #db.drop_all()  # 每次运行，先删除再创建
+    db.drop_all()  # 每次运行，先删除再创建
     db.create_all()
     
     #admin = User(username='admin', password='root', email='admin@example.com')
@@ -67,7 +69,7 @@ def create_db():
     #           User(username='guest3', password='guest3', email='guest3@example.com'),
     #           User(username='guest4', password='guest4', email='guest4@example.com')]
     #db.session.add_all(guestes)
-    #db.session.commit()
+    db.session.commit()
     
 
 ############################################
@@ -141,11 +143,10 @@ def regist():
         p1=j_data.get("password1")
         p2=j_data.get("password2")
         em=j_data.get("email")
+       # print(em,uname)
         if valid_regist(uname, p1, p2, em):
-            user=User(username=uname, password=p1, email=em)
-            info=Info(username=uname, email=em, sex="", old="")
+            user=User(username=uname, password=p1, email=em, sex="", old="")
             db.session.add(user)
-            db.session.add(info)
             db.session.commit()
             message='注册成功!'
         else:
@@ -162,7 +163,7 @@ def getinfo():
     if request.method == 'POST':
         j_data=request.json
         uname=j_data.get("username")
-        info = Info.query.filter(Info.username == uname).first()
+        info = User.query.filter(User.username == uname).first()
     response={
          'name':info.username,
          'sex':info.sex,
@@ -182,9 +183,9 @@ def info():
         uname=j_data.get("username")
         age=j_data.get("age")
         sex=j_data.get("sex")
-        tmp = Info.query.filter(Info.username == uname).update({"old":age,"sex":sex})
+        tmp = User.query.filter(User.username == uname).update({"old":age,"sex":sex})
         db.session.commit()
-        info = Info.query.filter(Info.username == uname).first()
+        info = User.query.filter(User.username == uname).first()
         print("here")
         print(info)
         print("here")
@@ -236,7 +237,7 @@ def up_photo():
          'code':0
     } 
     print(response)
-    return response
+    return jsonify(response)
     
 if __name__ == '__main__':
     app.run(debug = True)
