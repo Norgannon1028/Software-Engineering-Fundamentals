@@ -4,17 +4,17 @@
     <div style="margin-top: 15px;">
       <el-input
         placeholder="请输入搜索内容"
-        v-model="inputCon"
+        v-model="searchkey"
         class="input-with-select"
       >
         <el-button
           slot="append"
           icon="el-icon-search"
-          @click="testCon"
+          @click="searchblog"
         ></el-button>
       </el-input>
     </div>
-    <div id="list">
+    <!-- <div id="list">
       <div
         class="each"
         v-show="showList"
@@ -22,15 +22,15 @@
         :key="index"
         @click="toResult(item.id)"
       >
-        <!-- {{ index + 1 }}. {{ item.con }} -->
+        
       </div>
-    </div>
-    <div style="margin-top: 15px;">
+    </div> -->
+    <!-- <div style="margin-top: 15px;">
       <el-tag v-show="showList" @click="addItem">添加元素</el-tag>
       <br />
       <br />
       <el-tag v-show="showList" @click="deleteItem">删除元素</el-tag>
-    </div>
+    </div> -->
     <!-- <div style="margin-top: 15px;">
       <el-tag @click="toTest">跳转测试</el-tag>
       <br />
@@ -49,6 +49,8 @@
 <script>
 // @ is an alias to /src
 import Navigator from "@/components/Navigator.vue";
+import axios from "axios";
+import global from "@/components/global.vue";
 
 export default {
   name: "Home",
@@ -57,7 +59,7 @@ export default {
   },
   data() {
     return {
-      inputCon: "",
+      searchkey: "",
       showList: false,
       items: [
         { con: "18373657", id: "11111" },
@@ -67,17 +69,27 @@ export default {
     };
   },
   methods: {
-    testCon() {
-      if (this.inputCon != "18373657") {
-        this.showList = false;
-      } else {
-        this.showList = true;
-      }
-      alert("输入的值为：" + this.inputCon);
-    },
-    toResult(itemId) {
-      this.$router.push({ path: "/result/" + itemId });
-    },
+    searchblog() {
+      var that = this;
+      axios
+        .post("http://localhost:5000/searchblog", {
+          searchkey: that.searchkey
+        })
+        .then(function(response) {
+          alert(response.data[0].keyword);
+          if (response.data.msg == "登录成功!") {
+            //alert(Navigator.username );
+            global.loginflag = true;
+            global.username = that.uname;
+          }
+        })
+        .catch(function(error) {
+          alert(error);
+        });
+    }
+    // toResult(itemId) {
+    //   this.$router.push({ path: "/result/" + itemId });
+    // },
     // toTest() {
     //   this.$router.push("test");
     // },
@@ -98,16 +110,16 @@ export default {
     //     }
     //   });
     // },
-    addItem() {
-      this.items.push({ con: "new", id: "1231223" });
-    },
-    deleteItem() {
-      if (this.items.length != 1) {
-        this.items.pop();
-      } else {
-        alert("无法删除");
-      }
-    }
+    // addItem() {
+    //   this.items.push({ con: "new", id: "1231223" });
+    // },
+    // deleteItem() {
+    //   if (this.items.length != 1) {
+    //     this.items.pop();
+    //   } else {
+    //     alert("无法删除");
+    //   }
+    // }
   }
 };
 </script>

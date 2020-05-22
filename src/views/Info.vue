@@ -14,6 +14,7 @@
         class="avatar-uploader"
         action="http://localhost:5000/upload"
         :on-success="handleAvatarSuccess"
+        :http-request="customUpload"
         :show-file-list="false"
         :before-upload="beforeAvatarUpload">
         <img v-if="image_url" :src="image_url" class="avatar">
@@ -150,7 +151,8 @@ export default {
         let param = new FormData()
         param.append('file',fileobj.file)
         var that = this;
-      axios
+        var  u='';
+       axios
         .post("http://localhost:5000/upload",param).then(res=>{
           if(res.data.code != 0) {
             alert('文件上传失败, code:' + res.data.code)
@@ -161,7 +163,8 @@ export default {
         })
         .catch(function(error) {
           alert(error); 
-        });
+        }); 
+        that.image_url=require('../assets/'+u);
       },
   }
 };

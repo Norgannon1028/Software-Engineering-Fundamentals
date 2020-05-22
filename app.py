@@ -5,6 +5,7 @@ from flask_sqlalchemy import SQLAlchemy
 from flask_mail import Mail,Message
 from sqlalchemy import and_, or_
 import re
+import datetime
 from threading import Thread
 
 app = Flask(__name__,template_folder="src/views")
@@ -40,20 +41,68 @@ class User(db.Model):
     email = db.Column(db.String(20), unique=True)
     sex = db.Column(db.String(10))
     old = db.Column(db.Integer)
+    time = db.Column(db.Date)
 
     def __repr__(self):
         return '<User %r>' % self.username
         
-# class Info(db.Model):
-#     __tablename__='Info'
-#     id = db.Column(db.Integer, primary_key=True)
-#     username = db.Column(db.String(80), unique=True)
-#     sex = db.Column(db.String(10))
-#     old = db.Column(db.Integer)
-#     email = db.Column(db.String(120), unique=True)
+class Blog(db.Model):
+    __tablename__='Blog'
+    id = db.Column(db.Integer, primary_key=True)
+    username = db.Column(db.String(80))
+    keyword = db.Column(db.String(80))
+    like = db.Column(db.Integer)
+    link = db.Column(db.String(80), unique=True)
+    title = db.Column(db.String(80))
+    time = db.Column(db.Date)
 
-#     def __repr__(self):
-#         return '<Info %r>' % self.username
+    def to_json(self):
+        dict = self.__dict__
+        if "_sa_instance_state" in dict:
+            del dict["_sa_instance_state"]
+        return dict
+
+    def __repr__(self):
+        return '<Info %r>' % self.username
+
+class File(db.Model):
+    __tablename__='File'
+    id = db.Column(db.Integer, primary_key=True)
+    username = db.Column(db.String(80))
+    link = db.Column(db.String(80), unique=True)
+
+    def __repr__(self):
+        return '<Info %r>' % self.username
+
+class Follow(db.Model):
+    __tablename__='Follow'
+    id = db.Column(db.Integer, primary_key=True)
+    username = db.Column(db.String(80))
+    touser = db.Column(db.String(80))
+
+    def __repr__(self):
+        return '<Info %r>' % self.username
+
+class Commit(db.Model):
+    __tablename__='Commit'
+    id = db.Column(db.Integer, primary_key=True)
+    username = db.Column(db.String(80))
+    title = db.Column(db.String(80))
+    text = db.Column(db.String(80))
+    time = db.Column(db.Date)
+
+    def __repr__(self):
+        return '<Info %r>' % self.username
+
+class Like(db.Model):
+    __tablename__='Like'
+    id = db.Column(db.Integer, primary_key=True)
+    username = db.Column(db.String(80))
+    title = db.Column(db.String(80))
+    time = db.Column(db.Date)
+
+    def __repr__(self):
+        return '<Info %r>' % self.username
 
 # 创建表格、插入数据
 @app.before_first_request
@@ -145,7 +194,8 @@ def regist():
         em=j_data.get("email")
        # print(em,uname)
         if valid_regist(uname, p1, p2, em):
-            user=User(username=uname, password=p1, email=em, sex="", old="")
+            today = datetime.date.today()
+            user=User(username=uname, password=p1, email=em, sex="", old="", time=today)
             db.session.add(user)
             db.session.commit()
             message='注册成功!'
@@ -221,6 +271,45 @@ def verify():
     }    
     print(response)
     return jsonify(response)
+
+
+#主页搜索博客
+@app.route('/searchblog', methods=['GET','POST'])
+def searchblog():
+    response={}
+    result = []
+    error = None
+    if request.method == 'POST':
+        j_data=request.json
+        searchkey=j_data.get("searchkey")
+        blogs=Blog.query.filter(or_(Blog.username.like("%"+searchkey+"%"),Blog.title.like("%"+searchkey+"%"),Blog.keyword.like("%"+searchkey+"%"))).all()
+        for blog in blogs:
+            result.append(blog.to_json())
+    print(result)
+    return jsonify(result)
+
+
+#新建博客
+@app.route('/write', methods=['GET','POST'])
+def writeblog():
+    response={}
+    error = None
+    if request.method == 'POST':
+        j_data=request.json
+        username=j_data.get("username")
+        text=j_data.get("text")
+        title=j_data.get("title")
+        keyword=j_data.get("keyword")
+       # print(em,uname)
+        today = datetime.date.today()
+        blog=Blog(username=username,keyword=keyword,title=title,link=text,like=0,time=today)
+        db.session.add(blog)
+        db.session.commit()
+        message='发布成功!'
+    response={'msg':message}
+    print(response)
+    return jsonify(response)
+
 
 @app.route('/upload', methods=['GET','POST'])
 def up_photo():

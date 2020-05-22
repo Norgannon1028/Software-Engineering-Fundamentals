@@ -87,7 +87,7 @@ export default {
           { type: 'email', message: '请输入正确的邮箱地址', trigger: ['blur', 'change'] }
         ],
         code:[
-          { required: false, message: '请输入验证码', trigger: 'blur' },
+          { required: true, message: '请输入验证码', trigger: 'blur' },
           { validator: checkcode, trigger: 'change'  }
         ]
       },

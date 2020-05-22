@@ -11,6 +11,9 @@
       <el-menu-item index="home" @click="toHome" >
         首页
       </el-menu-item>
+      <el-menu-item index="write" @click="toWrite" v-if="loginflag == true">
+        新建博文
+      </el-menu-item>
       <el-menu-item style="float:right" index="dropout" @click="drop" v-if="loginflag == true"
         >注销</el-menu-item
       >
@@ -59,6 +62,9 @@ export default {
     },
     toInfo() {
       this.$router.push({ path: "/info" });
+    },
+    toWrite() {
+      this.$router.push({ path: "/write" });
     },
     drop(){
       global.username="",
