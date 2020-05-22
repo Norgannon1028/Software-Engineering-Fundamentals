@@ -83,8 +83,8 @@ class Follow(db.Model):
     def __repr__(self):
         return '<Info %r>' % self.username
 
-class Commit(db.Model):
-    __tablename__='Commit'
+class Comment(db.Model):
+    __tablename__='Comment'
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(80))
     title = db.Column(db.String(80))
@@ -107,10 +107,7 @@ class Like(db.Model):
 # 创建表格、插入数据
 @app.before_first_request
 def create_db():
-    db.drop_all()  # 每次运行，先删除再创建
     db.create_all()
-    b=Blog(id=1,keyword='test',username='testname')
-    db.session.add(b)
     #admin = User(username='admin', password='root', email='admin@example.com')
     #db.session.add(admin)
 
