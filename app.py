@@ -287,11 +287,11 @@ def searchblog():
         j_data=request.json
         searchkey=j_data.get("searchkey")
         #print(db.session.query(Blog).join(User, User.id==Blog.userid))
-        blogs=db.session.query(Blog).join()
+        blogs=db.session.query(Blog).join(User, User.id==Blog.userid).filter(or_(Blog.title.like('%'+searchkey+'%'),User.username.like('%'+searchkey+'%')))
         for blog in blogs:
             if blog == None:
                 continue
-            print(blog)
+            #print(blog)
             response['blog'+str(i)]=blog.to_dict()
             i+=1
             #result.append(blog.to_json())
@@ -309,6 +309,7 @@ def writeblog():
         userid=j_data.get("userid")
         text=j_data.get("text")
         title=j_data.get("title")
+        keyword=j_data.get("keyword")
         print(time.strftime("%Y-%m-%d",time.localtime(time.time())))
         blog=Blog(userid=userid,keyword=keyword,title=title,link=text,like=0,time=time.strftime("%Y-%m-%d",time.localtime(time.time())))
         print(blog)
