@@ -60,7 +60,7 @@ class Blog(db.Model):
         dict = self.__dict__
         if "_sa_instance_state" in dict:
             del dict["_sa_instance_state"]
-        return dict
+        return jsonify(dict)
 
     def __repr__(self):
         return '<Info %r>' % self.username
@@ -109,7 +109,8 @@ class Like(db.Model):
 def create_db():
     db.drop_all()  # 每次运行，先删除再创建
     db.create_all()
-    
+    b=Blog(id=1,keyword='test',username='testname')
+    db.session.add(b)
     #admin = User(username='admin', password='root', email='admin@example.com')
     #db.session.add(admin)
 
@@ -280,13 +281,16 @@ def searchblog():
     result = []
     error = None
     if request.method == 'POST':
+        i=1
         j_data=request.json
         searchkey=j_data.get("searchkey")
         blogs=Blog.query.filter(or_(Blog.username.like("%"+searchkey+"%"),Blog.title.like("%"+searchkey+"%"),Blog.keyword.like("%"+searchkey+"%"))).all()
         for blog in blogs:
-            result.append(blog.to_json())
-    print(result)
-    return jsonify(result)
+            response['blog'+str(i)]=blog
+            i+=1
+            #result.append(blog.to_json())
+    print(response)
+    return jsonify(response)
 
 
 #新建博客
