@@ -56,6 +56,7 @@ export default {
             //alert(Navigator.username );
             global.loginflag = true;
             global.username = that.uname;
+            global.userid = response.data.id;
             //alert(Navigator.username );
             //this.forceUpdate();
             //this.$root.username = that.uname;

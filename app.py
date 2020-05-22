@@ -167,6 +167,7 @@ def send_mail(subject, to, body):
 def login():
     response={}
     error = None
+    thispeopleid=0
     message='测试'
     if request.method == 'POST':
         j_data=request.json
@@ -174,9 +175,12 @@ def login():
         p=j_data.get("password")
         if valid_login(uname, p):
             message='登录成功!' 
+#FindUserIDByName="select id from User where username=%s"
+            thispeople=User.query.filter(User.username==uname).first()
+            thispeopleid=thispeople.id
         else:
             message='用户名或密码错误!'
-    response={'msg':message}
+    response={'msg':message,'id':thispeopleid}
     print(response)
     return jsonify(response)
 
@@ -282,9 +286,13 @@ def searchblog():
         i=1
         j_data=request.json
         searchkey=j_data.get("searchkey")
-        blogs=Blog.query.filter(or_(Blog.userid.like("%"+searchkey+"%"),Blog.title.like("%"+searchkey+"%"),Blog.keyword.like("%"+searchkey+"%"))).all()
+        #print(db.session.query(Blog).join(User, User.id==Blog.userid))
+        blogs=db.session.query(Blog).join()
         for blog in blogs:
-            response['blog'+str(i)]=blog
+            if blog == None:
+                continue
+            print(blog)
+            response['blog'+str(i)]=blog.to_dict()
             i+=1
             #result.append(blog.to_json())
     print(response)
@@ -301,8 +309,9 @@ def writeblog():
         userid=j_data.get("userid")
         text=j_data.get("text")
         title=j_data.get("title")
-        keyword=j_data.get("keyword")
+        print(time.strftime("%Y-%m-%d",time.localtime(time.time())))
         blog=Blog(userid=userid,keyword=keyword,title=title,link=text,like=0,time=time.strftime("%Y-%m-%d",time.localtime(time.time())))
+        print(blog)
         db.session.add(blog)
         db.session.commit()
         message='发布成功!'

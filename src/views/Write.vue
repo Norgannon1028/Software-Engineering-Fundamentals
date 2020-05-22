@@ -49,6 +49,7 @@ export default {
   data() {
     return {
       username: global.username,
+      userid: global.userid,
       text: "",
       title: "",
       keyword: ""
@@ -60,6 +61,7 @@ export default {
       axios
         .post("http://localhost:5000/write", {
           username: that.username,
+          userid: that.userid,
           text: that.text,
           title: that.title,
           keyword: that.keyword
