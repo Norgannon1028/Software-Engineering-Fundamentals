@@ -5,6 +5,8 @@ import Login from "../views/Login.vue";
 import Signup from "../views/Signup.vue";
 import Info from "../views/Info.vue";
 import Write from "../views/Write.vue";
+import Blog from "../views/Blog.vue";
+
 Vue.use(VueRouter);
 
 const routes = [
@@ -38,6 +40,11 @@ const routes = [
     path: "/write",
     name: "Write",
     component: Write
+  },
+  {
+    path: "/blog/:id",
+    name: "Blog",
+    component: Blog
   },
   // 在添加组件时再引用vue文件使用
   // {

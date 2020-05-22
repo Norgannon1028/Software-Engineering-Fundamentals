@@ -1,8 +1,10 @@
 <script>
-  const userName = "";
+  const userName = " ";
   const loginflag = false;
+  const lookingblog = false;
   export default {
     userName,
-    loginflag
+    loginflag,
+    lookingblog
   }
 </script>

@@ -11,6 +11,9 @@
       <el-menu-item index="home" @click="toHome" >
         首页
       </el-menu-item>
+      <el-menu-item index="look" v-if="lookingblog == true">
+        博文浏览
+      </el-menu-item>
       <el-menu-item index="write" @click="toWrite" v-if="loginflag == true">
         新建博文
       </el-menu-item>

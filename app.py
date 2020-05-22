@@ -5,7 +5,7 @@ from flask_sqlalchemy import SQLAlchemy
 from flask_mail import Mail,Message
 from sqlalchemy import and_, or_
 import re
-import datetime
+import datetime,time
 from threading import Thread
 
 app = Flask(__name__,template_folder="src/views")
@@ -41,7 +41,7 @@ class User(db.Model):
     email = db.Column(db.String(20), unique=True)
     sex = db.Column(db.String(10))
     old = db.Column(db.Integer)
-    time = db.Column(db.Date)
+    time = db.Column(db.String(80))
 
     def __repr__(self):
         return '<User %r>' % self.username
@@ -49,26 +49,27 @@ class User(db.Model):
 class Blog(db.Model):
     __tablename__='Blog'
     id = db.Column(db.Integer, primary_key=True)
-    username = db.Column(db.String(80))
+    userid = db.Column(db.Integer)
     keyword = db.Column(db.String(80))
     like = db.Column(db.Integer)
     link = db.Column(db.String(80), unique=True)
     title = db.Column(db.String(80))
-    time = db.Column(db.Date)
+    time = db.Column(db.String(80))
 
     def to_json(self):
+        return jsonify(self.to_dict)
+    def to_dict(self):
         dict = self.__dict__
         if "_sa_instance_state" in dict:
             del dict["_sa_instance_state"]
-        return jsonify(dict)
-
+        return dict
     def __repr__(self):
-        return '<Info %r>' % self.username
+        return '<Info %r>' % self.id
 
 class File(db.Model):
     __tablename__='File'
     id = db.Column(db.Integer, primary_key=True)
-    username = db.Column(db.String(80))
+    userid = db.Column(db.Integer)
     link = db.Column(db.String(80), unique=True)
 
     def __repr__(self):
@@ -77,8 +78,8 @@ class File(db.Model):
 class Follow(db.Model):
     __tablename__='Follow'
     id = db.Column(db.Integer, primary_key=True)
-    username = db.Column(db.String(80))
-    touser = db.Column(db.String(80))
+    toid = db.Column(db.Integer)
+    fromid = db.Column(db.Integer)
 
     def __repr__(self):
         return '<Info %r>' % self.username
@@ -86,10 +87,10 @@ class Follow(db.Model):
 class Comment(db.Model):
     __tablename__='Comment'
     id = db.Column(db.Integer, primary_key=True)
-    username = db.Column(db.String(80))
-    title = db.Column(db.String(80))
-    text = db.Column(db.String(80))
-    time = db.Column(db.Date)
+    userid = db.Column(db.Integer)
+    blogid = db.Column(db.Integer)
+    content = db.Column(db.String(80))
+    time = db.Column(db.String(80))
 
     def __repr__(self):
         return '<Info %r>' % self.username
@@ -97,9 +98,9 @@ class Comment(db.Model):
 class Like(db.Model):
     __tablename__='Like'
     id = db.Column(db.Integer, primary_key=True)
-    username = db.Column(db.String(80))
-    title = db.Column(db.String(80))
-    time = db.Column(db.Date)
+    userid = db.Column(db.Integer)
+    blogid = db.Column(db.Integer)
+    time = db.Column(db.String(80))
 
     def __repr__(self):
         return '<Info %r>' % self.username
@@ -281,7 +282,7 @@ def searchblog():
         i=1
         j_data=request.json
         searchkey=j_data.get("searchkey")
-        blogs=Blog.query.filter(or_(Blog.username.like("%"+searchkey+"%"),Blog.title.like("%"+searchkey+"%"),Blog.keyword.like("%"+searchkey+"%"))).all()
+        blogs=Blog.query.filter(or_(Blog.userid.like("%"+searchkey+"%"),Blog.title.like("%"+searchkey+"%"),Blog.keyword.like("%"+searchkey+"%"))).all()
         for blog in blogs:
             response['blog'+str(i)]=blog
             i+=1
@@ -297,13 +298,11 @@ def writeblog():
     error = None
     if request.method == 'POST':
         j_data=request.json
-        username=j_data.get("username")
+        userid=j_data.get("userid")
         text=j_data.get("text")
         title=j_data.get("title")
         keyword=j_data.get("keyword")
-       # print(em,uname)
-        today = datetime.date.today()
-        blog=Blog(username=username,keyword=keyword,title=title,link=text,like=0,time=today)
+        blog=Blog(userid=userid,keyword=keyword,title=title,link=text,like=0,time=time.strftime("%Y-%m-%d",time.localtime(time.time())))
         db.session.add(blog)
         db.session.commit()
         message='发布成功!'
@@ -311,7 +310,22 @@ def writeblog():
     print(response)
     return jsonify(response)
 
+#获得博客
+@app.route('/getblog', methods=['GET','POST'])
+def getblog():
+    response={}
+    error = None
+    if request.method == 'POST':
+        j_data=request.json
+        id=j_data.get("blogid")
+        print(id)
+        blog=Blog.query.filter(Blog.userid==id).first()
+        print(blog)
+        response=blog.to_dict()
+    print(response)
+    return jsonify(response)
 
+#上传文件
 @app.route('/upload', methods=['GET','POST'])
 def up_photo():
     print(request.data)

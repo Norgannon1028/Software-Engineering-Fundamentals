@@ -14,6 +14,15 @@
         ></el-button>
       </el-input>
     </div>
+    <div class="recommend" v-if=" searchret.data== null">
+
+      
+    </div>
+    <div class="item" v-for="item in searchret.data" :key="item.id" @click="tothisblog(item.id)">
+      <p>文章标题：{{ item.title }} 关键词：{{ item.keyword }}</p>
+      <p>作者：{{ item.username }} 被赞数：{{ item.like }}</p>
+      <p>发表时间：{{ item.time }}</p>
+    </div>
     <!-- <div id="list">
       <div
         class="each"
@@ -59,7 +68,10 @@ export default {
   },
   data() {
     return {
+      username:global.username,
+      loginflag:global.loginflag,
       searchkey: "",
+      searchret: {},
       showList: false,
       items: [
         { con: "18373657", id: "11111" },
@@ -76,16 +88,20 @@ export default {
           searchkey: that.searchkey
         })
         .then(function(response) {
-          alert(response.data[0].keyword);
-          if (response.data.msg == "登录成功!") {
-            //alert(Navigator.username );
-            global.loginflag = true;
-            global.username = that.uname;
-          }
+          that.searchret=response
         })
         .catch(function(error) {
           alert(error);
         });
+    },
+    tothisblog(blogid)
+    {
+      this.$router.push({
+        path: "/blog",
+        query: {
+          id: blogid
+        }
+      });
     }
     // toResult(itemId) {
     //   this.$router.push({ path: "/result/" + itemId });
