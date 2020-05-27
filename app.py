@@ -7,6 +7,8 @@ from sqlalchemy import and_, or_
 import re
 import datetime,time
 from threading import Thread
+import random
+import string
 
 app = Flask(__name__,template_folder="src/views")
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///Blog.db'
@@ -198,7 +200,7 @@ def regist():
        # print(em,uname)
         if valid_regist(uname, p1, p2, em):
             today = datetime.date.today()
-            user=User(username=uname, password=p1, email=em, sex="", old="", time=today)
+            user=User(username=uname, password=p1, email=em, sex="1", old="18", time=today)
             db.session.add(user)
             db.session.commit()
             message='注册成功!'
@@ -226,6 +228,73 @@ def getinfo():
     #print(response.email)
     print(response)
     return jsonify(response)
+
+#重置密码
+@app.route('/repassword', methods=['GET','POST'])
+def repassword():
+    response={}
+    error = None
+    message=''
+    if request.method == 'POST':
+        j_data=request.json
+        username=j_data.get("username")
+        email=j_data.get("email")
+        user = User.query.filter(and_(User.username == username)).first()
+        if user==None:
+            message='用户不存在！'
+            print(message)
+        elif user.email!=email:
+            message='邮箱错误，请输入注册时的邮箱！'
+            print(message)
+        else:
+            pwd = ""
+            letters=string.ascii_letters+string.digits
+            for i in range(10):
+                letter=random.choice(letters)
+                pwd += letter
+            tmp = User.query.filter(User.username == username).update({"password":pwd})
+            db.session.commit()
+            try:
+                send_mail("技术分享博客网站账户重置密码",email,"重置密码:"+pwd+",请及时修改密码")
+                message= '新的密码已经发至您的邮箱，请注意查收并及时修改～'
+            except Exception as e:
+                print(e)
+                message='邮件发送失败，请稍后重试'
+    response={
+         'message':message
+    }    
+    print(response)
+    return jsonify(response)
+
+#修改密码
+@app.route('/changepassword', methods=['GET','POST'])
+def changepassword():
+    response={}
+    error = None
+    message=''
+    if request.method == 'POST':
+        j_data=request.json
+        username=j_data.get("username")
+        oldpassword=j_data.get("oldpassword")
+        newpasswprd=j_data.get("password")
+        user = User.query.filter(User.username == username).first()
+        print(user.password)
+        print(oldpassword)
+        if user == None:
+            message='用户不存在！'
+        elif user.password != oldpassword:
+            message='旧密码错误！'
+        else:
+            tmp = User.query.filter(User.username == username).update({"password":newpasswprd})
+            db.session.commit()
+            message='密码修改成功！'
+    response={
+         'msg':message
+    }    
+    print(response)
+    return jsonify(response)
+
+
 #更新用户个人信息
 @app.route('/info', methods=['GET','POST'])
 def info():
@@ -268,13 +337,43 @@ def verify():
             message= '发送成功，请注意查收~'
         except Exception as e:
             print(e)
-            message='发送失败'
+            message='发送失败，请稍后重试'
     response={
          'message':message
     }    
     print(response)
     return jsonify(response)
 
+#主页推荐博客
+@app.route('/recommend', methods=['GET','POST'])
+def recommend():
+    response={}
+    result = []
+    error = None
+    blogs = None
+    if request.method == 'POST':
+        i=1
+        j_data=request.json
+        recommendway=str(j_data.get("recommendway"))
+        #print(db.session.query(Blog).join(User, User.id==Blog.userid))
+        if recommendway == '最新':
+            blogs=db.session.query(Blog).join(User, User.id==Blog.userid).order_by(Blog.time.desc())
+        elif recommendway == '最热门':
+            blogs=db.session.query(Blog).join(User, User.id==Blog.userid).order_by(Blog.like.desc())
+        print(blogs)
+        for blog in blogs:
+            if blog == None:
+                continue
+            tmp=User.query.filter(User.id == blog.userid).first()
+            #print(tmp.username)
+            blog=blog.to_dict()
+            blog['userid']=tmp.username
+            #print(blog)
+            response['blog'+str(i)]=blog
+            i+=1
+            #result.append(blog.to_json())
+    print(response)
+    return jsonify(response)
 
 #主页搜索博客
 @app.route('/searchblog', methods=['GET','POST'])
@@ -282,17 +381,26 @@ def searchblog():
     response={}
     result = []
     error = None
+    blogs = None
     if request.method == 'POST':
         i=1
         j_data=request.json
         searchkey=j_data.get("searchkey")
+        searchway=j_data.get("searchway")
         #print(db.session.query(Blog).join(User, User.id==Blog.userid))
-        blogs=db.session.query(Blog).join(User, User.id==Blog.userid).filter(or_(Blog.title.like('%'+searchkey+'%'),User.username.like('%'+searchkey+'%')))
+        if searchway == '最新':
+            blogs=db.session.query(Blog).join(User, User.id==Blog.userid).filter(or_(Blog.title.like('%'+searchkey+'%'),User.username.like('%'+searchkey+'%'))).order_by(Blog.time.desc())
+        elif searchway == '最热门':
+            blogs=db.session.query(Blog).join(User, User.id==Blog.userid).filter(or_(Blog.title.like('%'+searchkey+'%'),User.username.like('%'+searchkey+'%'))).order_by(Blog.like.desc())
         for blog in blogs:
             if blog == None:
                 continue
+            tmp=User.query.filter(User.id == blog.userid).first()
+            #print(tmp.username)
+            blog=blog.to_dict()
+            blog['userid']=tmp.username
             #print(blog)
-            response['blog'+str(i)]=blog.to_dict()
+            response['blog'+str(i)]=blog
             i+=1
             #result.append(blog.to_json())
     print(response)
@@ -320,6 +428,48 @@ def writeblog():
     print(response)
     return jsonify(response)
 
+#添加点赞
+@app.route('/addlike', methods=['GET','POST'])
+def addlike():
+    response={}
+    error = None
+    if request.method == 'POST':
+        j_data=request.json
+        blogid=j_data.get("blogid")
+        thisuserid=j_data.get("thisuser")
+        blog = Blog.query.filter(Blog.id == blogid).first()
+        tmp = Blog.query.filter(Blog.id == blogid).update({"like":blog.like+1})
+        like=Like(userid=thisuserid,blogid=blogid,time=time.strftime("%Y-%m-%d",time.localtime(time.time())))
+        db.session.add(like)
+        db.session.commit()
+        message='点赞成功！'
+    response={
+        'msg':message,
+    }
+    print(response)
+    return jsonify(response)
+
+#取消点赞
+@app.route('/dislike', methods=['GET','POST'])
+def dislike():
+    response={}
+    error = None
+    if request.method == 'POST':
+        j_data=request.json
+        blogid=j_data.get("blogid")
+        thisuserid=j_data.get("thisuser")
+        blog = Blog.query.filter(Blog.id == blogid).first()
+        tmp = Blog.query.filter(Blog.id == blogid).update({"like":blog.like-1})
+        like = Like.query.filter(and_(Like.userid == thisuserid,Like.blogid == blogid)).first()
+        db.session.delete(like)
+        db.session.commit()
+        message='已取消点赞！'
+    response={
+        'msg':message,
+    }
+    print(response)
+    return jsonify(response)
+
 #获得博客
 @app.route('/getblog', methods=['GET','POST'])
 def getblog():
@@ -328,10 +478,21 @@ def getblog():
     if request.method == 'POST':
         j_data=request.json
         id=j_data.get("blogid")
-        print(id)
-        blog=Blog.query.filter(Blog.userid==id).first()
-        print(blog)
-        response=blog.to_dict()
+        thisuserid=j_data.get("thisuser")
+        blog=Blog.query.filter(Blog.id==id).first()
+        userid=blog.userid
+        user=User.query.filter(User.id==userid).first()
+        like=Like.query.filter(and_(Like.userid==thisuserid,Like.blogid==blog.id)).first()
+        retblog=blog.to_dict()
+        if like == None:
+            likeflag=False
+        else:
+            likeflag=True
+    response={
+        'blog':retblog,
+        'writer':user.username,
+        'likeflag':likeflag
+    }    
     print(response)
     return jsonify(response)
 

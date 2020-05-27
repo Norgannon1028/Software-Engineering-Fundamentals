@@ -20,9 +20,12 @@
       ></el-input>
       <br />
       <br />
-      <el-button type="primary" icon="el-icon-remove" @click="test_ajax">
-        登录
-      </el-button>
+        <el-button type="primary" icon="el-icon-remove" @click="test_ajax">
+          登录
+        </el-button>
+        <el-button v-if="showrepassword==true" @click="toRepassword">
+          忘记密码？
+        </el-button>
     </div>
   </div>
 </template>
@@ -39,10 +42,19 @@ export default {
   data() {
     return {
       uname: "",
-      passwd: ""
+      passwd: "",
+      showrepassword: false
     };
   },
+  created()
+  {
+    this.showrepassword=false
+    global.loginflag=false
+  },
   methods: {
+    toRepassword(){
+      this.$router.push({ path: "/repassword" });
+    },
     test_ajax() {
       var that = this;
       axios
@@ -64,6 +76,10 @@ export default {
             that.$router.push({
               path: "/home"
             });
+          }
+          else if(response.data.msg == "用户名或密码错误!")
+          {
+            that.showrepassword=true;
           }
         })
         .catch(function(error) {

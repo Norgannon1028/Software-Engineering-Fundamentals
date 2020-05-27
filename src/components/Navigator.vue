@@ -20,6 +20,9 @@
       <el-menu-item style="float:right" index="dropout" @click="drop" v-if="loginflag == true"
         >注销</el-menu-item
       >
+      <el-menu-item style="float:right" index="changepassword" @click="toChangepwd" v-if="loginflag == true"
+        >修改密码</el-menu-item
+      >
       <el-menu-item style="float:right" index="info" @click="toInfo" v-if="loginflag == true"
         >个人信息</el-menu-item
       >
@@ -68,6 +71,9 @@ export default {
     },
     toWrite() {
       this.$router.push({ path: "/write" });
+    },
+    toChangepwd() {
+      this.$router.push({ path: "/changepassword" });
     },
     drop(){
       global.username="",

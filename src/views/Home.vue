@@ -4,24 +4,69 @@
     <div style="margin-top: 15px;">
       <el-input
         placeholder="请输入搜索内容"
-        v-model="searchkey"
+        v-model="searchkeynotuse"
         class="input-with-select"
       >
         <el-button
           slot="append"
           icon="el-icon-search"
-          @click="searchblog"
+          @click="searchblog(searchmethods)"
         ></el-button>
       </el-input>
     </div>
-    <div class="recommend" v-if=" searchret.data== null">
-
-      
+    <br />
+    <div v-if="searchflag==false">
+      <div style="float:left;font-size:14px">
+        排序方式：
+      </div>
+      <el-dropdown style="float:left" @command="recommendCommand">
+        <span class="el-dropdown-link">
+          {{ recommendmethods }}<i class="el-icon-arrow-down el-icon--right"></i>
+        </span>
+        <br />
+        <el-dropdown-menu slot="dropdown">
+          <el-dropdown-item command="最热门">最热门</el-dropdown-item>
+          <el-dropdown-item command="最新">最新</el-dropdown-item>
+            <!-- <el-dropdown-item>螺蛳粉</el-dropdown-item>
+            <el-dropdown-item disabled>双皮奶</el-dropdown-item>
+            <el-dropdown-item divided>蚵仔煎</el-dropdown-item> -->
+        </el-dropdown-menu>
+      </el-dropdown>
+      <br />
+      <div
+        class="recommend"
+        v-for="item in recommendret.data"
+        :key="item.id"
+        @click="tothisblog(item.id)"
+      >
+        <p>文章标题：{{ item.title }} 关键词：{{ item.keyword }}</p>
+        <p>作者：{{ item.userid }} 被赞数：{{ item.like }}</p>
+        <p>发表时间：{{ item.time }}</p>
+      </div>
     </div>
-    <div class="item" v-for="item in searchret.data" :key="item.id" @click="tothisblog(item.id)">
-      <p>文章标题：{{ item.title }} 关键词：{{ item.keyword }}</p>
-      <p>作者：{{ item.username }} 被赞数：{{ item.like }}</p>
-      <p>发表时间：{{ item.time }}</p>
+    <div v-if="searchflag==true">
+      <div style="float:left;font-size:14px">
+        排序方式：
+      </div>
+      <el-dropdown style="float:left" @command="searchCommand">
+        <span class="el-dropdown-link">
+          {{ searchmethods }}<i class="el-icon-arrow-down el-icon--right"></i>
+        </span>
+        <br />
+        <el-dropdown-menu slot="dropdown">
+          <el-dropdown-item command="最热门">最热门</el-dropdown-item>
+          <el-dropdown-item command="最新">最新</el-dropdown-item>
+            <!-- <el-dropdown-item>螺蛳粉</el-dropdown-item>
+            <el-dropdown-item disabled>双皮奶</el-dropdown-item>
+            <el-dropdown-item divided>蚵仔煎</el-dropdown-item> -->
+        </el-dropdown-menu>
+      </el-dropdown>
+      <br />
+      <div class="item" v-for="item in searchret.data" :key="item.id" @click="tothisblog(item.id)">
+        <p>文章标题：{{ item.title }} 关键词：{{ item.keyword }}</p>
+        <p>作者：{{ item.userid }} 被赞数：{{ item.like }}</p>
+        <p>发表时间：{{ item.time }}</p>
+      </div>
     </div>
     <!-- <div id="list">
       <div
@@ -70,25 +115,39 @@ export default {
     return {
       username:global.username,
       loginflag:global.loginflag,
+      searchkeynotuse: "",
       searchkey: "",
       searchret: {},
-      showList: false,
-      items: [
-        { con: "18373657", id: "11111" },
-        { con: "11111111", id: "22222" },
-        { con: "22222222", id: "33333" }
-      ]
+      recommendret: {},
+      searchflag: false,
+      // showList: false,
+      recommendmethods: "最热门",
+      searchmethods: "最热门"
     };
   },
+  created()
+  {
+    this.searchflag = false;
+    this.searchret = {};
+    this.recommendblog(this.recommendmethods);
+  },
   methods: {
-    searchblog() {
-      var that = this;
+    recommendCommand(command) {
+      this.recommendmethods=command;
+      this.recommendblog(this.recommendmethods);
+    },
+    searchCommand(command) {
+      this.searchmethods=command;
+      this.sortblog(this.searchmethods);
+    },
+    recommendblog(recommendway) {
+       var that = this;
       axios
-        .post("http://localhost:5000/searchblog", {
-          searchkey: that.searchkey
+        .post("http://localhost:5000/recommend", {
+          recommendway: recommendway
         })
         .then(function(response) {
-          that.searchret=response
+          that.recommendret=response
         })
         .catch(function(error) {
           alert(error);
@@ -102,7 +161,40 @@ export default {
           id: blogid
         }
       });
-    }
+    },
+    searchblog(searchway) {
+      this.searchkey=this.searchkeynotuse
+      this.searchflag=true
+      this.recommendret={}
+      var that = this;
+      axios
+        .post("http://localhost:5000/searchblog", {
+          searchkey: that.searchkey,
+          searchway: searchway
+        })
+        .then(function(response) {
+          that.searchret=response
+        })
+        .catch(function(error) {
+          alert(error);
+        });
+    },
+    sortblog(searchway) {
+      this.searchflag=true
+      this.recommendret={}
+      var that = this;
+      axios
+        .post("http://localhost:5000/searchblog", {
+          searchkey: that.searchkey,
+          searchway: searchway
+        })
+        .then(function(response) {
+          that.searchret=response
+        })
+        .catch(function(error) {
+          alert(error);
+        });
+    },
     // toResult(itemId) {
     //   this.$router.push({ path: "/result/" + itemId });
     // },
@@ -146,5 +238,12 @@ export default {
   border: 1px solid black;
   margin: 5px;
   cursor: pointer;
+}
+.el-dropdown-link {
+  cursor: pointer;
+  color: #409EFF;
+}
+.el-icon-arrow-down {
+  font-size: 12px;
 }
 </style>

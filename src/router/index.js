@@ -6,9 +6,9 @@ import Signup from "../views/Signup.vue";
 import Info from "../views/Info.vue";
 import Write from "../views/Write.vue";
 import Blog from "../views/Blog.vue";
-
+import Repassword from "../views/Repassword.vue";
+import Changepassword from "../views/Changepassword.vue";
 Vue.use(VueRouter);
-
 const routes = [
   // 单纯的切换，redirect对应的是name
   {
@@ -27,6 +27,16 @@ const routes = [
     component: Login
   },
   {
+    path: "/repassword",
+    name: "Repassword",
+    component: Repassword
+  },
+  {
+    path: "/changepassword",
+    name: "Changepassword",
+    component: Changepassword
+  },
+  {
     path: "/signup",
     name: "Signup",
     component: Signup
@@ -42,7 +52,7 @@ const routes = [
     component: Write
   },
   {
-    path: "/blog/:id",
+    path: "/blog",
     name: "Blog",
     component: Blog
   },
