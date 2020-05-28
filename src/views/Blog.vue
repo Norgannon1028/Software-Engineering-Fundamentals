@@ -11,6 +11,23 @@
 
       <p>发表时间：{{ blog_time }}</p>
       <p>内容：{{blog_link}}</p>
+
+      <el-button type="primary" @click="showallcomment">查看评论</el-button>
+      <el-button type="primary" @click="writecomment">发表评论</el-button>
+      <br />
+      <br />
+      <el-input
+        type="comment"
+        placeholder="在此输入评论内容"
+        v-model="comment"
+        style="width:60%"
+        class="input-with-select"
+        v-if="writingcomment==true"
+      ></el-input>
+      <br />
+      <br />
+      <el-button type="primary" v-if="writingcomment==true" @click="finishcomment">确认</el-button>
+      <el-button v-if="writingcomment==true" @click="stopwriting">取消</el-button>
     </div>
     
   </div>
@@ -38,7 +55,9 @@ export default {
       blog_like:0,
       blog_link:'',
       blog_keyword:'',
-      likeflag:false
+      likeflag:false,
+      writingcomment:false,
+      comment:""
     };
   },
   created() {
@@ -50,6 +69,7 @@ export default {
           thisuser: global.userid
         })
         .then(function(response) {
+          that.blog_id=response.data.blog.id
           that.blog_title=response.data.blog.title;
           that.blog_author=response.data.writer;
           that.blog_time=response.data.blog.time;
@@ -63,6 +83,36 @@ export default {
         });
   },
   methods: {
+    stopwriting() {
+      this.writingcomment=false;
+    },
+    writecomment() {
+      this.writingcomment=true;
+    },
+    finishcomment() {
+      var that=this;
+      axios
+        .post("http://localhost:5000/addcomment", {
+          blogid: that.blog_id,
+          thisuser: global.userid,
+          commenttext: that.comment
+        })
+        .then(function(response) {
+          // alert(response.data.msg)
+          if(response.data.msg=="评论成功！")
+          {
+            alert(response.data.msg)
+          }
+          else
+          {
+            alert("点赞失败，请稍后重试")
+          }
+        })
+        .catch(function(error) {
+          alert(error);
+        });
+      this.writingcomment=true;
+    },
     likethisbolg() {
       var that=this;
       axios

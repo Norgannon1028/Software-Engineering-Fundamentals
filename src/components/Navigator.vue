@@ -11,8 +11,8 @@
       <el-menu-item index="home" @click="toHome" >
         首页
       </el-menu-item>
-      <el-menu-item index="look" v-if="lookingblog == true">
-        博文浏览
+      <el-menu-item index="blog" v-if="activeIndex == 'blog'">
+        浏览博文
       </el-menu-item>
       <el-menu-item index="write" @click="toWrite" v-if="loginflag == true">
         新建博文
@@ -51,7 +51,7 @@ export default {
       //returnType: this.return === "true" ? true : false,
       activeIndex: this.return,
       username: global.username,
-      loginflag: global.loginflag
+      loginflag: global.loginflag,
       // loginflag: this.$root.loginflag,
       // username: this.$root.username
     };

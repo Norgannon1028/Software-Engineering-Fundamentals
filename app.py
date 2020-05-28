@@ -95,7 +95,7 @@ class Comment(db.Model):
     time = db.Column(db.String(80))
 
     def __repr__(self):
-        return '<Info %r>' % self.username
+        return '<Info %r>' % self.content
 
 class Like(db.Model):
     __tablename__='Like'
@@ -424,6 +424,26 @@ def writeblog():
         db.session.add(blog)
         db.session.commit()
         message='发布成功!'
+    response={'msg':message}
+    print(response)
+    return jsonify(response)
+
+#新建评论
+@app.route('/addcomment', methods=['GET','POST'])
+def addcomment():
+    response={}
+    error = None
+    if request.method == 'POST':
+        j_data=request.json
+        userid=j_data.get("thisuser")
+        text=j_data.get("commenttext")
+        blogid=j_data.get("blogid")
+        print(time.strftime("%Y-%m-%d",time.localtime(time.time())))
+        comment=Comment(userid=userid,blogid=blogid,content=text,time=time.strftime("%Y-%m-%d",time.localtime(time.time())))
+        print(comment)
+        db.session.add(comment)
+        db.session.commit()
+        message='评论成功！'
     response={'msg':message}
     print(response)
     return jsonify(response)
