@@ -9,8 +9,9 @@ import datetime,time
 from threading import Thread
 import random
 import string
+import base64
 
-app = Flask(__name__,template_folder="src/views")
+app = Flask(__name__,template_folder="src/views",static_folder='./src/assets/static')
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///Blog.db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = True
 app.secret_key = '\xc9ixnRb\xe40\xd4\xa5\x7f\x03\xd0y6\x01\x1f\x96\xeao+\x8a\x9f\xe4'
@@ -54,7 +55,7 @@ class Blog(db.Model):
     userid = db.Column(db.Integer)
     keyword = db.Column(db.String(80))
     like = db.Column(db.Integer)
-    link = db.Column(db.String(80), unique=True)
+    link = db.Column(db.Text, unique=True)
     title = db.Column(db.String(80))
     time = db.Column(db.String(80))
 
@@ -106,7 +107,24 @@ class Like(db.Model):
 
     def __repr__(self):
         return '<Info %r>' % self.username
+class Draft(db.Model):
+    __tablename__='Draft'
+    id = db.Column(db.Integer, primary_key=True)
+    userid = db.Column(db.Integer)
+    keyword = db.Column(db.String(80))
+    link = db.Column(db.Text, unique=True)
+    title = db.Column(db.String(80))
+    time = db.Column(db.String(80))
 
+    def to_json(self):
+        return jsonify(self.to_dict)
+    def to_dict(self):
+        dict = self.__dict__
+        if "_sa_instance_state" in dict:
+            del dict["_sa_instance_state"]
+        return dict
+    def __repr__(self):
+        return '<Info %r>' % self.id
 # 创建表格、插入数据
 @app.before_first_request
 def create_db():
@@ -155,6 +173,14 @@ def send_async_mail(subject, to ,body):
 def send_mail(subject, to, body):
     message = Message(subject, recipients=[to], body=body)
     mail.send(message)
+
+
+def return_img_stream(img_local_path):
+    img_stream = ''
+    with open(img_local_path, 'rb') as f:
+        res = base64.b64encode(f.read())
+    return res
+
 ############################################
 # 路由
 ############################################
@@ -415,19 +441,70 @@ def writeblog():
     if request.method == 'POST':
         j_data=request.json
         userid=j_data.get("userid")
-        text=j_data.get("text")
+        md=j_data.get("md")
         title=j_data.get("title")
         keyword=j_data.get("keyword")
-        print(time.strftime("%Y-%m-%d",time.localtime(time.time())))
-        blog=Blog(userid=userid,keyword=keyword,title=title,link=text,like=0,time=time.strftime("%Y-%m-%d",time.localtime(time.time())))
-        print(blog)
+        blog=Blog(userid=userid,keyword=keyword,title=title,link=md,like=0,time=time.strftime("%Y-%m-%d",time.localtime(time.time())))
         db.session.add(blog)
         db.session.commit()
         message='发布成功!'
     response={'msg':message}
     print(response)
     return jsonify(response)
-
+    
+#保存草稿
+@app.route('/savedraft', methods=['GET','POST'])
+def savedraft():
+    response={}
+    error = None
+    if request.method == 'POST':
+        j_data=request.json
+        userid=j_data.get("userid")
+        draftid=j_data.get("draftid")
+        md=j_data.get("md")
+        title=j_data.get("title")
+        keyword=j_data.get("keyword")
+        print(j_data)
+        if draftid==0:
+            draft=Draft(userid=userid,keyword=keyword,title=title,link=md,time=time.strftime("%Y-%m-%d",time.localtime(time.time())))
+            db.session.add(draft)
+            db.session.commit()
+        else:
+            draft=Draft.query.filter(and_(Draft.userid==userid,Draft.id==draftid)).first()
+            if draft != None:
+                draft.title=title
+                draft.link=md
+                draft.keyword=keyword
+                db.session.commit()
+        message='保存草稿成功!'
+    response={'msg':message}
+    print(response)
+    return jsonify(response)
+#获得草稿
+@app.route('/getdraft', methods=['GET','POST'])
+def getdraft():
+    response={}
+    error = None
+    draft_flag=False
+    if request.method == 'POST':
+        j_data=request.json
+        print(j_data)
+        userid=j_data.get("userid")
+        draftid=j_data.get("draftid")
+        draft=Draft.query.filter(and_(Draft.userid==userid,Draft.id==draftid)).first()
+        if draft != None:
+            draft_flag=True
+            message='读取草稿成功!'
+            response={'msg':message,
+            'draft':draft.to_dict,
+            'draft_flag':draft_flag}
+        else:
+            message='读取草稿失败!'
+            response={'msg':message,
+            'draft':'null',
+            'draft_flag':draft_flag}
+    print(response)
+    return jsonify(response)
 #新建评论
 @app.route('/addcomment', methods=['GET','POST'])
 def addcomment():
@@ -523,12 +600,12 @@ def up_photo():
     print(request.form)
     print(request.files)
     img = request.files.get('file')
-    path = "./src/assets/"
+    path = "./src/assets/static/"
     file_path = path+img.filename
     img.save(file_path)
     print('上传头像成功，上传的用户是：')
     response={
-         'image_url':img.filename,
+         'image_url':'http://127.0.0.1:5000/static/'+img.filename,
          'code':0
     } 
     print(response)

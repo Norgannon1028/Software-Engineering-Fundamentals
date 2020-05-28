@@ -10,7 +10,16 @@
       <el-button @click="dislikethisbolg" v-if="likeflag==true && loginflag==true">已点赞</el-button>
 
       <p>发表时间：{{ blog_time }}</p>
-      <p>内容：{{blog_link}}</p>
+      <mavon-editor
+      class="md"
+      :value="blog_md"
+      :subfield = "false"
+      :defaultOpen = "'preview'"
+      :toolbarsFlag = "false"
+      :editable="false"
+      :scrollStyle="true"
+      :ishljs = "true"
+      ></mavon-editor>
 
       <el-button type="primary" @click="showallcomment">查看评论</el-button>
       <el-button type="primary" @click="writecomment">发表评论</el-button>
@@ -48,12 +57,12 @@ export default {
     return {
       username:global.username,
       loginflag:global.loginflag,
-      blog_id:-1,
+      blog_id:1,
       blog_title:'',
       blog_author:'',
       blog_time:'',
       blog_like:0,
-      blog_link:'',
+      blog_md:'',
       blog_keyword:'',
       likeflag:false,
       writingcomment:false,
@@ -61,7 +70,7 @@ export default {
     };
   },
   created() {
-    this.blog_id = this.$route.query.id;
+    this.blog_id = parseInt(this.$route.params.id);
     var that=this;
     axios
         .post("http://localhost:5000/getblog", {
@@ -74,7 +83,7 @@ export default {
           that.blog_author=response.data.writer;
           that.blog_time=response.data.blog.time;
           that.blog_like=response.data.blog.like;
-          that.blog_link=response.data.blog.link;
+          that.blog_md=response.data.blog.link;
           that.blog_keyword=response.data.blog.keyword;
           that.likeflag=response.data.likeflag;
         })
@@ -177,7 +186,12 @@ export default {
     },
     tothisblog(blogid)
     {
-      this.$router.push({ path: "/blog/" + blogid });
+     this.$router.push({
+        name: "Blog",
+        params: {
+          id: blogid
+        }
+      });
     }
   },
   mounted(){

@@ -158,7 +158,7 @@ export default {
             alert('文件上传失败, code:' + res.data.code)
           } else {
             //that.image_url=res.data.image_url;
-            that.image_url=require('../assets/'+res.data.image_url);
+            that.image_url=res.data.image_url;
           }
         })
         .catch(function(error) {

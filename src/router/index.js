@@ -47,12 +47,12 @@ const routes = [
     component: Info
   },
   {
-    path: "/write",
+    path: "/write/:id",
     name: "Write",
     component: Write
   },
   {
-    path: "/blog",
+    path: "/blog:id",
     name: "Blog",
     component: Blog
   },

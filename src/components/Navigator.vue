@@ -70,7 +70,7 @@ export default {
       this.$router.push({ path: "/info" });
     },
     toWrite() {
-      this.$router.push({ path: "/write" });
+      this.$router.push({ name: "Write",params: { id:0 }});
     },
     toChangepwd() {
       this.$router.push({ path: "/changepassword" });

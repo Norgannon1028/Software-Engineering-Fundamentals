@@ -156,8 +156,8 @@ export default {
     tothisblog(blogid)
     {
       this.$router.push({
-        path: "/blog",
-        query: {
+        name: "Blog",
+        params: {
           id: blogid
         }
       });

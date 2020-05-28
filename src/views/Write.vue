@@ -19,18 +19,11 @@
         class="input-with-select"
       ></el-input>
       <br />
+      <div id="md">
+	      <mavon-editor ref=md @imgAdd="$imgAdd" v-model="mdStr" @save="$save"></mavon-editor>
+	    </div>
       <br />
-      内容:
-      <el-input
-        type="text"
-        placeholder="text"
-        v-model="text"
-        style="width:60%"
-        class="input-with-select"
-      ></el-input>
-      <br />
-      <br />
-      <el-button type="primary" @click="test_ajax">
+      <el-button type="primary" @click="blog_post">
         发表
       </el-button>
     </div>
@@ -48,32 +41,55 @@ export default {
   },
   data() {
     return {
+      draft_id:0,
       username: global.username,
       userid: global.userid,
       text: "",
       title: "",
-      keyword: ""
+      keyword: "",
+      time:"",
+      mdStr:""
     };
   },
+  created() {
+    this.draft_id = parseInt(this.$route.params.id);
+    var that=this;
+    if(this.draft_id!=0){
+      axios
+        .post("http://localhost:5000/getdraft", {
+          draftid: that.draft_id,
+          userid: global.userid
+        })
+        .then(function(response) {
+          if(response.data.draft_flag){
+            that.title=response.data.draft.title;
+          that.time=response.data.draft.time;
+          that.mdStr=response.data.draft.link;
+          that.keyword=response.data.draft.keyword;
+          }
+          else{
+            that.$router.push({ name: "Write",params: { id:0 }});
+          }
+        })
+        .catch(function(error) {
+          alert(error);
+        });
+    }
+    
+  },
   methods: {
-    test_ajax() {
+    blog_post() {
       var that = this;
       axios
         .post("http://localhost:5000/write", {
-          username: that.username,
           userid: that.userid,
-          text: that.text,
+          md: that.mdStr,
           title: that.title,
           keyword: that.keyword
         })
         .then(function(response) {
           alert(response.data.msg);
           if (response.data.msg == "发布成功!") {
-            //alert(Navigator.username );
-            //alert(Navigator.username );
-            //this.forceUpdate();
-            //this.$root.username = that.uname;
-            //this.$root.loginflag = true;
             that.$router.push({
               path: "/home"
             });
@@ -82,7 +98,38 @@ export default {
         .catch(function(error) {
           alert(error);
         });
-    }
+    },
+    $imgAdd(pos, $file){
+          var that=this;
+           var formdata = new FormData();
+           formdata.append('userid',that.userid);
+           formdata.append('file', $file);
+           axios
+          .post("http://localhost:5000/upload", formdata)
+          .then(function(response) {
+            that.$refs.md.$img2Url(pos,response.data.image_url);
+          })
+          .catch(function(error) {
+            alert(error);
+          });
+      },
+      $save(){
+        var that = this;
+        axios
+        .post("http://localhost:5000/savedraft", {
+          userid: that.userid,
+          md: that.mdStr,
+          title: that.title,
+          keyword: that.keyword,
+          draftid: that.draft_id
+        })
+        .then(function(response) {
+          alert(response.data.msg);
+        })
+        .catch(function(error) {
+          alert(error);
+        });
+      }
   }
 };
 </script>
