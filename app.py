@@ -24,9 +24,9 @@ app.config['MAIL_SERVER'] = 'smtp.qq.com'
 app.config['MAIL_PORT'] = 465
 app.config['MAIL_USE_SSL'] = True
 app.config['MAIL_USE_TLS'] = False 
-app.config['MAIL_USERNAME'] = '2300776402@qq.com'
-app.config['MAIL_PASSWORD'] = 'ndfzggfkdkgudjia'
-app.config['MAIL_DEFAULT_SENDER'] = '2300776402@qq.com'
+app.config['MAIL_USERNAME'] = ''
+app.config['MAIL_PASSWORD'] = ''
+app.config['MAIL_DEFAULT_SENDER'] = ''
 mail = Mail(app)
 ############################################
 # 数据库
@@ -359,7 +359,7 @@ def verify():
         print(code)
         print(email)
         try:
-            send_mail("技术分享博客网站账户安全代码",email,"安全代码:"+str(code))
+            send_mail("安全代码",email,"安全代码:"+str(code))
             message= '发送成功，请注意查收~'
         except Exception as e:
             print(e)

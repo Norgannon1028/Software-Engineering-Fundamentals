@@ -52,7 +52,7 @@ const routes = [
     component: Write
   },
   {
-    path: "/blog:id",
+    path: "/blog/:id",
     name: "Blog",
     component: Blog
   },
