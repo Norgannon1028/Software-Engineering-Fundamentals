@@ -1,6 +1,13 @@
 <template>
   <div class="info">
     <Navigator return="info" />
+    <div>
+      <el-button style="float:left" v-if="myinfoflag==false" @click="tomyinfo">
+            返回我的空间
+      </el-button>
+    </div>
+    <br />
+    <br />
     <div style="margin-top: 15px;">
       <span> 用户名: </span>
       <span> {{uname}} </span>
@@ -42,7 +49,7 @@
       ></el-input>
       <br />
       <br />
-      <el-button type="primary" @click="changeinfo()" v-if="changeflag == false"
+      <el-button type="primary" @click="changeinfo()" v-if="changeflag == false && myinfoflag==true"
         >修改
       </el-button>
       <el-button
@@ -53,6 +60,18 @@
       </el-button>
       <el-button @click="resetForm()" v-if="changeflag == true">取消</el-button>
     </div>
+    <div
+        class="allhisblogs"
+        v-for="item in hisblogs.data"
+        :key="item.id"
+      >
+      <br/>
+        <p @click="tothisblog(item.id)">文章标题：{{ item.title }}</p>
+        <p>关键词：{{ item.keyword }}</p>
+        <p>作者：{{ item.userid }} </p>
+        <p>被赞数：{{ item.like }}</p>
+        <p>发表时间：{{ item.time }}</p>
+    </div>
   </div>
 </template>
 
@@ -62,7 +81,6 @@
 import axios from "axios";
 import Navigator from "@/components/Navigator.vue";
 import global from "@/components/global.vue";
-
 export default {
   name: "Info",
   components: {
@@ -71,18 +89,59 @@ export default {
   data() {
     return {
       changeflag: false,
-      uname: global.username,
+      uname: "",
       email: "",
       sex: "",
       age: "",
-      image_url:''
+      image_url:'',
+      hisblogs:{},
+      myinfoflag:true,
+      nowusername:global.username
     };
   },
   mounted(){
     //alert("hi!");
+    this.uname = this.$route.params.username;
+    if(this.uname==global.username)
+    {
+      this.myinfoflag=true
+    }
+    else
+    {
+      this.myinfoflag=false
+    }
     this.getinfo();
+    this.gethisblogs();
   },
   methods: {
+    tomyinfo() {
+      this.uname=global.username
+      this.myinfoflag=true
+      this.getinfo();
+      this.gethisblogs();
+    },
+    gethisblogs() {
+      var that = this;
+      axios
+        .post("http://localhost:5000/allhisblog", {
+          username: that.uname
+        })
+        .then(function(response) {
+          that.hisblogs=response
+        })
+        .catch(function(error) {
+          alert(error);
+        });
+    },
+    tothisblog(blogid)
+    {
+      this.$router.push({
+        name: "Blog",
+        params: {
+          id: blogid
+        }
+      });
+    },
     getinfo(){
       var that = this;
       axios

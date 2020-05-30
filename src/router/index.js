@@ -8,6 +8,8 @@ import Write from "../views/Write.vue";
 import Blog from "../views/Blog.vue";
 import Repassword from "../views/Repassword.vue";
 import Changepassword from "../views/Changepassword.vue";
+import Comment from "../views/Comment.vue";
+
 Vue.use(VueRouter);
 const routes = [
   // 单纯的切换，redirect对应的是name
@@ -20,6 +22,11 @@ const routes = [
     path: "/home",
     name: "Home",
     component: Home
+  },
+  {
+    path: "/comment",
+    name: "Comment",
+    component: Comment
   },
   {
     path: "/login",

@@ -37,10 +37,12 @@
         class="recommend"
         v-for="item in recommendret.data"
         :key="item.id"
-        @click="tothisblog(item.id)"
       >
-        <p>文章标题：{{ item.title }} 关键词：{{ item.keyword }}</p>
-        <p>作者：{{ item.userid }} 被赞数：{{ item.like }}</p>
+      <br/>
+        <p @click="tothisblog(item.id)">文章标题：{{ item.title }}</p>
+        <p>关键词：{{ item.keyword }}</p>
+        <p @click="tohisinfo(item.userid)">作者：{{ item.userid }} </p>
+        <p>被赞数：{{ item.like }}</p>
         <p>发表时间：{{ item.time }}</p>
       </div>
     </div>
@@ -132,6 +134,14 @@ export default {
     this.recommendblog(this.recommendmethods);
   },
   methods: {
+    tohisinfo(hisname) {
+      this.$router.push({
+        name: "Info",
+        params: {
+          username: hisname
+        }
+      });
+    },
     recommendCommand(command) {
       this.recommendmethods=command;
       this.recommendblog(this.recommendmethods);
@@ -141,7 +151,7 @@ export default {
       this.sortblog(this.searchmethods);
     },
     recommendblog(recommendway) {
-       var that = this;
+      var that = this;
       axios
         .post("http://localhost:5000/recommend", {
           recommendway: recommendway

@@ -4,7 +4,8 @@
     
     <div class="item">
       <p>文章标题：{{blog_title}} 关键词：{{ blog_keyword }}</p>
-      <p>作者：{{ blog_author }} 被赞数：{{ blog_like }}</p>
+      <p @click="tohisinfo(blog_author)">作者：{{ blog_author }}</p>
+      <p>被赞数：{{ blog_like }}</p>
 
       <el-button type="primary" @click="likethisbolg" v-if="likeflag==false && loginflag==true">点赞</el-button>
       <el-button @click="dislikethisbolg" v-if="likeflag==true && loginflag==true">已点赞</el-button>
@@ -20,8 +21,17 @@
       :scrollStyle="true"
       :ishljs = "true"
       ></mavon-editor>
-
-      <el-button type="primary" @click="showallcomment">查看评论</el-button>
+      <br />
+      <br />
+      <div class="item" v-for="item in showcomment.data" :key="item.id">
+        <p>评论内容：{{ item.content }}</p>
+        <p @click="tohisinfo(item.userid)">作者：{{ item.userid }}</p>
+        <p>发表时间：{{ item.time }}</p>
+        <br />
+      </div>
+      <br />
+      <br />
+      <el-button type="primary" @click="showallcomment(blog_id)">查看评论</el-button>
       <el-button type="primary" @click="writecomment">发表评论</el-button>
       <br />
       <br />
@@ -66,7 +76,8 @@ export default {
       blog_keyword:'',
       likeflag:false,
       writingcomment:false,
-      comment:""
+      comment:"",
+      showcomment:{}
     };
   },
   created() {
@@ -90,37 +101,103 @@ export default {
         .catch(function(error) {
           alert(error);
         });
-  },
-  methods: {
-    stopwriting() {
-      this.writingcomment=false;
-    },
-    writecomment() {
-      this.writingcomment=true;
-    },
-    finishcomment() {
-      var that=this;
       axios
-        .post("http://localhost:5000/addcomment", {
-          blogid: that.blog_id,
-          thisuser: global.userid,
-          commenttext: that.comment
+        .post("http://localhost:5000/loadcomments", {
+          blogid: that.blog_id
         })
         .then(function(response) {
-          // alert(response.data.msg)
-          if(response.data.msg=="评论成功！")
-          {
-            alert(response.data.msg)
-          }
-          else
-          {
-            alert("点赞失败，请稍后重试")
-          }
+          that.showcomment=response
         })
         .catch(function(error) {
           alert(error);
         });
-      this.writingcomment=true;
+    
+   // this.loadcomments();     
+  },
+  methods: {
+    tohisinfo(hisname) {
+      this.$router.push({
+        name: "Info",
+        params: {
+          username: hisname
+        }
+      });
+    },
+    showallcomment(blogid) {
+      this.$router.push({
+        name: "Comment",
+        params: {
+          id: blogid
+        }
+      });
+    },
+    // loadcomments() {
+    //   var that = this;
+    //   axios
+    //     .post("http://localhost:5000/loadcomments", {
+    //       blogid: that.blog_id
+    //     })
+    //     .then(function(response) {
+    //       that.showcomment=response
+    //     })
+    //     .catch(function(error) {
+    //       alert(error);
+    //     });
+    // },
+    stopwriting() {
+      this.writingcomment=false;
+    },
+    writecomment() {
+      if(global.loginflag==true)
+      {
+        this.writingcomment=true;
+      }
+      else
+      {
+        alert("请先登录")
+      }
+    },
+    finishcomment() {
+      if(this.comment=="")
+      {
+        alert("评论不能为空");
+      }
+      else
+      {
+        var that=this;
+        axios
+          .post("http://localhost:5000/addcomment", {
+            blogid: that.blog_id,
+            thisuser: global.userid,
+            commenttext: that.comment
+          })
+          .then(function(response) {
+            // alert(response.data.msg)
+            if(response.data.msg=="评论成功！")
+            {
+              alert(response.data.msg)
+            }
+            else
+            {
+              alert("点赞失败，请稍后重试")
+            }
+          })
+          .catch(function(error) {
+            alert(error);
+          });
+        this.comment="";
+        this.writingcomment=false;
+      }
+      axios
+        .post("http://localhost:5000/loadcomments", {
+          blogid: that.blog_id
+        })
+        .then(function(response) {
+          that.showcomment=response
+        })
+        .catch(function(error) {
+          alert(error);
+        });
     },
     likethisbolg() {
       var that=this;

@@ -97,6 +97,11 @@ class Comment(db.Model):
 
     def __repr__(self):
         return '<Info %r>' % self.content
+    def to_dict(self):
+        dict = self.__dict__
+        if "_sa_instance_state" in dict:
+            del dict["_sa_instance_state"]
+        return dict
 
 class Like(db.Model):
     __tablename__='Like'
@@ -452,6 +457,71 @@ def writeblog():
     print(response)
     return jsonify(response)
     
+#用户信息页面userid对应的所有博客
+@app.route('/allhisblog', methods=['GET','POST'])
+def allhisblog():
+    response={}
+    result = []
+    error = None
+    blogs = None
+    if request.method == 'POST':
+        i=1
+        j_data=request.json
+        username=j_data.get("username")
+        user=User.query.filter(User.username == username).first()
+        userid=user.id
+        #print(db.session.query(Blog).join(User, User.id==Blog.userid))
+        blogs=Blog.query.filter(Blog.userid==userid).order_by(Blog.time.desc(),Blog.id.desc())
+        for blog in blogs:
+            if blog == None:
+                continue
+            tmp=User.query.filter(User.id == blog.userid).first()
+            if tmp==None:
+                continue
+            #print(tmp.username)
+            blog=blog.to_dict()
+            blog['userid']=tmp.username
+            #print(blog)
+            response['blog'+str(i)]=blog
+            i+=1
+            #result.append(blog.to_json())
+    print(response)
+    return jsonify(response)
+
+
+#加载推荐的博客评论
+@app.route('/loadcomments', methods=['GET','POST'])
+def loadcomments():
+    response={}
+    result = []
+    error = None
+    comments = None
+    if request.method == 'POST':
+        i=0
+        j_data=request.json
+        blogid=j_data.get("blogid")
+        comments=Comment.query.filter(Comment.blogid==blogid).order_by(Comment.time.desc(),Comment.id.desc())
+        #print(db.session.query(Blog).join(User, User.id==Blog.userid))
+        print(comments)
+        for comment in comments:
+            if comment == None:
+                continue
+            id=int(comment.userid)
+            tmp=User.query.filter(User.id == id).first()
+            if tmp==None:
+                continue
+            print(tmp)
+            comment=comment.to_dict()
+            comment['userid']=tmp.username
+            #print(blog)
+            response['comment'+str(i)]=comment
+            i+=1
+            if i == 3:
+                break
+            #result.append(blog.to_json())
+    print(response)
+    return jsonify(response)
+
 #保存草稿
 @app.route('/savedraft', methods=['GET','POST'])
 def savedraft():
@@ -525,6 +595,36 @@ def addcomment():
     print(response)
     return jsonify(response)
 
+#全部评论
+@app.route('/allcomments', methods=['GET','POST'])
+def allcomments():
+    response={}
+    result = []
+    error = None
+    comments = None
+    if request.method == 'POST':
+        i=1
+        j_data=request.json
+        blogid=j_data.get("blogid")
+        #print(db.session.query(Blog).join(User, User.id==Blog.userid))
+        comments=db.session.query(Comment).filter(Comment.blogid==blogid).order_by(Comment.time.desc(),Comment.id.desc()).all()
+        print(comments)
+        for comment in comments:
+            if comment == None:
+                continue
+            tmp=User.query.filter(User.id == comment.userid).first()
+            #print(tmp.username)
+            if tmp == None:
+                continue 
+            comment=comment.to_dict()
+            comment['userid']=tmp.username
+            #print(blog)
+            response['comment'+str(i)]=comment
+            i+=1
+            #result.append(blog.to_json())
+    print(response)
+    return jsonify(response)
+    
 #添加点赞
 @app.route('/addlike', methods=['GET','POST'])
 def addlike():

@@ -11,11 +11,14 @@
       <el-menu-item index="home" @click="toHome" >
         首页
       </el-menu-item>
+      <el-menu-item index="write" @click="toWrite" v-if="loginflag == true">
+        新建博文
+      </el-menu-item>
       <el-menu-item index="blog" v-if="activeIndex == 'blog'">
         浏览博文
       </el-menu-item>
-      <el-menu-item index="write" @click="toWrite" v-if="loginflag == true">
-        新建博文
+      <el-menu-item index="comment" v-if="activeIndex == 'comment'">
+        全部评论
       </el-menu-item>
       <el-menu-item style="float:right" index="dropout" @click="drop" v-if="loginflag == true"
         >注销</el-menu-item
@@ -24,7 +27,7 @@
         >修改密码</el-menu-item
       >
       <el-menu-item style="float:right" index="info" @click="toInfo" v-if="loginflag == true"
-        >个人信息</el-menu-item
+        >用户空间</el-menu-item
       >
       <el-menu-item style="float:right" v-if="loginflag == true"
         >欢迎:{{ username }}</el-menu-item
@@ -67,7 +70,12 @@ export default {
       this.$router.push({ path: "/login" });
     },
     toInfo() {
-      this.$router.push({ path: "/info" });
+      this.$router.push({
+        name: "Info",
+        params: {
+          username: global.username
+        }
+      });
     },
     toWrite() {
       this.$router.push({ name: "Write",params: { id:0 }});
