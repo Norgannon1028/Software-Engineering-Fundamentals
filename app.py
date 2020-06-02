@@ -1,9 +1,10 @@
 from functools import wraps
-from flask import Flask, request, render_template, redirect, url_for, flash, session,jsonify
+from flask import Flask, request, render_template, redirect, url_for, flash, session,jsonify,current_app
 from flask_cors import CORS
 from flask_sqlalchemy import SQLAlchemy
 from flask_mail import Mail,Message
 from sqlalchemy import and_, or_
+from itsdangerous import TimedJSONWebSignatureSerializer as Serializer
 import re
 import datetime,time
 from threading import Thread
@@ -54,6 +55,18 @@ class User(db.Model):
             del dict["_sa_instance_state"]
         return dict
 
+    def generate_auth_token(self,expiration):
+        s = Serializer(current_app.config['SECRET_KEY'],expires_in = expiration)
+        return  s.dumps({'id':self.id}).decode('utf-8')
+    
+    @staticmethod
+    def verify_auth_token(token):
+        s = Serializer(current_app.config['SECRET_KEY'])
+        try:
+            data = s.loads(token)
+        except:
+            return None
+        return User.query.get(data['id'])
         
 class Blog(db.Model):
     __tablename__='Blog'
@@ -207,6 +220,7 @@ def login():
     response={}
     error = None
     thispeopleid=0
+    token=""
     message='测试'
     if request.method == 'POST':
         j_data=request.json
@@ -217,9 +231,10 @@ def login():
 #FindUserIDByName="select id from User where username=%s"
             thispeople=User.query.filter(User.username==uname).first()
             thispeopleid=thispeople.id
+            token=thispeople.generate_auth_token(expiration=3600)
         else:
             message='用户名或密码错误!'
-    response={'msg':message,'id':thispeopleid}
+    response={'msg':message,'id':thispeopleid,'token':token}
     print(response)
     return jsonify(response)
 

@@ -2,6 +2,7 @@ import Vue from "vue";
 import App from "./App.vue";
 import router from "./router";
 import axios from "axios";
+import store from "./store/state";
 import ElementUI from "element-ui";
 import "element-ui/lib/theme-chalk/index.css";
 import mavonEditor from 'mavon-editor'
@@ -19,6 +20,7 @@ Vue.use(mavonEditor);
 
 new Vue({
   router,
+  store:store,
   data: function() {
     return {
       //loginflag: false,

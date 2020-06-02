@@ -69,6 +69,7 @@ export default {
             global.loginflag = true;
             global.username = that.uname;
             global.userid = response.data.id;
+            that.$store.commit('setToken',JSON.stringify(response.data.token));
             //alert(Navigator.username );
             //this.forceUpdate();
             //this.$root.username = that.uname;
