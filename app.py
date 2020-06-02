@@ -48,6 +48,12 @@ class User(db.Model):
 
     def __repr__(self):
         return '<User %r>' % self.username
+    def to_dict(self):
+        dict = self.__dict__
+        if "_sa_instance_state" in dict:
+            del dict["_sa_instance_state"]
+        return dict
+
         
 class Blog(db.Model):
     __tablename__='Blog'
@@ -250,11 +256,16 @@ def getinfo():
         j_data=request.json
         uname=j_data.get("username")
         info = User.query.filter(User.username == uname).first()
+        userid = info.id
+        fansnum=db.session.query(Follow).filter(Follow.toid==userid).count()
+        follownum=db.session.query(Follow).filter(Follow.fromid==userid).count()
     response={
          'name':info.username,
          'sex':info.sex,
          'old':info.old,
-         'email':info.email
+         'email':info.email,
+         'fansnum':fansnum,
+         'follownum':follownum
     }    
     #print(response.email)
     print(response)
@@ -661,6 +672,121 @@ def dislike():
         db.session.delete(like)
         db.session.commit()
         message='已取消点赞！'
+    response={
+        'msg':message,
+    }
+    print(response)
+    return jsonify(response)
+
+
+#全部关注者
+@app.route('/allfollows', methods=['GET','POST'])
+def allfollows():
+    response={}
+    result = []
+    error = None
+    if request.method == 'POST':
+        i=1
+        j_data=request.json
+        username=j_data.get("username")
+        user=User.query.filter(User.username==username).first()
+        userid=user.id
+        #print(db.session.query(Blog).join(User, User.id==Blog.userid))
+        follows=db.session.query(Follow).filter(Follow.fromid==userid).all()
+        for follow in follows:
+            followerid=follow.fromid
+            follower=User.query.filter(User.id==followerid).first()
+            follower=follower.to_dict()
+            response['follower'+str(i)]=follower
+    print(response)
+    return jsonify(response)
+
+#全部粉丝
+@app.route('/allfans', methods=['GET','POST'])
+def allfans():
+    response={}
+    result = []
+    error = None
+    if request.method == 'POST':
+        i=1
+        j_data=request.json
+        username=j_data.get("username")
+        user=User.query.filter(User.username==username).first()
+        userid=user.id
+        #print(db.session.query(Blog).join(User, User.id==Blog.userid))
+        follows=db.session.query(Follow).filter(Follow.toid==userid).all()
+        for follow in follows:
+            fansid=follow.fromid
+            fans=User.query.filter(User.id==fansid).first()
+            fans=fans.to_dict()
+            response['fans'+str(i)]=fans
+    print(response)
+    return jsonify(response)
+
+#检查关注
+@app.route('/checkfollow', methods=['GET','POST'])
+def checkfollow():
+    response={}
+    error = None
+    if request.method == 'POST':
+        j_data=request.json
+        myname=j_data.get("myname")
+        hisname=j_data.get("hisname")
+        my=User.query.filter(User.username==myname).first()
+        he=User.query.filter(User.username==hisname).first()
+        myid=my.id
+        hisid=he.id
+        follow=Follow.query.filter(and_(Follow.toid==hisid,Follow.fromid==myid)).first()
+        if follow == None:
+            followflag=False
+        else:
+            followflag=True
+    response={
+        'followflag':followflag
+    }    
+    print(response)
+    return jsonify(response)
+
+#添加关注
+@app.route('/followhim', methods=['GET','POST'])
+def followhim():
+    response={}
+    error = None
+    if request.method == 'POST':
+        j_data=request.json
+        myname=j_data.get("myname")
+        hisname=j_data.get("hisname")
+        my=User.query.filter(User.username==myname).first()
+        he=User.query.filter(User.username==hisname).first()
+        myid=my.id
+        hisid=he.id
+        follow=Follow(toid=hisid,fromid=myid)
+        db.session.add(follow)
+        db.session.commit()
+        message='关注成功！'
+    response={
+        'msg':message,
+    }
+    print(response)
+    return jsonify(response)
+
+#取消关注
+@app.route('/disfollowhim', methods=['GET','POST'])
+def disfollowhim():
+    response={}
+    error = None
+    if request.method == 'POST':
+        j_data=request.json
+        myname=j_data.get("myname")
+        hisname=j_data.get("hisname")
+        my=User.query.filter(User.username==myname).first()
+        he=User.query.filter(User.username==hisname).first()
+        myid=my.id
+        hisid=he.id
+        follow = Follow.query.filter(and_(Follow.fromid == myid,Follow.toid == hisid)).first()
+        db.session.delete(follow)
+        db.session.commit()
+        message='取消关注成功！'
     response={
         'msg':message,
     }

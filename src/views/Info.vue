@@ -1,13 +1,13 @@
 <template>
   <div class="info">
     <Navigator return="info" />
-    <div>
-      <el-button style="float:left" v-if="myinfoflag==false" @click="tomyinfo">
+    <div v-if="myinfoflag==false && loginflag==true">
+      <el-button style="float:left" @click="tomyinfo">
             返回我的空间
       </el-button>
+      <br />
+      <br />
     </div>
-    <br />
-    <br />
     <div style="margin-top: 15px;">
       <span> 用户名: </span>
       <span> {{uname}} </span>
@@ -49,6 +49,12 @@
       ></el-input>
       <br />
       <br />
+      <span @click="tofans()">粉丝数:{{fansnum}}</span>
+      <br />
+      <br />
+      <span @click="tofollows()">关注数:{{follownum}}</span>
+      <br />
+      <br />
       <el-button type="primary" @click="changeinfo()" v-if="changeflag == false && myinfoflag==true"
         >修改
       </el-button>
@@ -59,6 +65,14 @@
         >确认
       </el-button>
       <el-button @click="resetForm()" v-if="changeflag == true">取消</el-button>
+    </div>
+    <div>
+      <el-button type="primary" @click="followhim()" v-if="followflag == false && myinfoflag==false && loginflag==true"
+          >关注
+      </el-button>
+      <el-button @click="disfollowhim()" v-if="followflag == true && myinfoflag==false && loginflag==true"
+          >取消关注
+      </el-button>
     </div>
     <div
         class="allhisblogs"
@@ -88,6 +102,9 @@ export default {
   },
   data() {
     return {
+      fansnum:0,
+      follownum:0,
+      loginflag: global.loginflag,
       changeflag: false,
       uname: "",
       email: "",
@@ -96,7 +113,8 @@ export default {
       image_url:'',
       hisblogs:{},
       myinfoflag:true,
-      nowusername:global.username
+      nowusername:global.username,
+      followflag: true
     };
   },
   mounted(){
@@ -110,10 +128,97 @@ export default {
     {
       this.myinfoflag=false
     }
+    if(this.myinfoflag==false && this.loginflag==true)
+    {
+      this.checkfollow();
+    }
     this.getinfo();
     this.gethisblogs();
   },
   methods: {
+    tofollows() {
+      this.$router.push({
+        name: "Follows",
+        params: {
+          username: this.uname
+        }
+      });
+    },
+    tofans() {
+      this.$router.push({
+        name: "Fans",
+        params: {
+          username: this.uname
+        }
+      });
+    },
+    followhim() {
+      var that = this;
+      axios
+        .post("http://localhost:5000/followhim", {
+          hisname: that.uname,
+          myname: global.username
+        })
+        .then(function(response) {
+          if(response.data.msg=='关注成功！')
+          {
+            that.followflag=true;
+            that.fansnum+=1;
+            alert(response.data.msg)
+          }
+          else
+          {
+            alert(response.data.msg)
+          }
+        })
+        .catch(function(error) {
+          alert(error);
+        });
+    },
+    disfollowhim() {
+      var that = this;
+      axios
+        .post("http://localhost:5000/disfollowhim", {
+          hisname: that.uname,
+          myname: global.username
+        })
+        .then(function(response) {
+          if(response.data.msg=='取消关注成功！')
+          {
+            that.followflag=false;
+            that.fansnum-=1;
+            alert(response.data.msg)
+          }
+          else
+          {
+            alert(response.data.msg)
+          }
+        })
+        .catch(function(error) {
+          alert(error);
+        });
+    },
+    checkfollow() {
+      var that = this;
+      axios
+        .post("http://localhost:5000/checkfollow", {
+          hisname: that.uname,
+          myname: global.username
+        })
+        .then(function(response) {
+          if(response.data.followflag==true)
+          {
+            that.followflag=true;
+          }
+          else
+          {
+            that.followflag=false;
+          }
+        })
+        .catch(function(error) {
+          alert(error);
+        });
+    },
     tomyinfo() {
       this.uname=global.username
       this.myinfoflag=true
@@ -153,6 +258,8 @@ export default {
           that.email=response.data.email;
           that.age=response.data.old;
           that.sex=response.data.sex;
+          that.fansnum=response.data.fansnum;
+          that.follownum=response.data.follownum;
           //alert(response)
           // if (response.data.name == "登录成功!") {
           //   Navigator.data.loginflag = true;
