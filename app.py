@@ -46,6 +46,7 @@ class User(db.Model):
     sex = db.Column(db.String(10))
     old = db.Column(db.Integer)
     time = db.Column(db.String(80))
+    avatar = db.Column(db.TEXT)
 
     def __repr__(self):
         return '<User %r>' % self.username
@@ -57,7 +58,7 @@ class User(db.Model):
 
     def generate_auth_token(self,expiration):
         s = Serializer(current_app.config['SECRET_KEY'],expires_in = expiration)
-        return  s.dumps({'id':self.id}).decode('utf-8')
+        return  s.dumps({'id':self.id,'name':self.username,'avatar':self.avatar}).decode('utf-8')
     
     @staticmethod
     def verify_auth_token(token):
@@ -228,7 +229,6 @@ def login():
         p=j_data.get("password")
         if valid_login(uname, p):
             message='登录成功!' 
-#FindUserIDByName="select id from User where username=%s"
             thispeople=User.query.filter(User.username==uname).first()
             thispeopleid=thispeople.id
             token=thispeople.generate_auth_token(expiration=3600)

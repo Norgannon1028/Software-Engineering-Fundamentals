@@ -107,6 +107,7 @@
 import Navigator from "@/components/Navigator.vue";
 import axios from "axios";
 import global from "@/components/global.vue";
+import jwt_decode from 'jwt-decode';
 
 export default {
   name: "Home",
@@ -132,6 +133,14 @@ export default {
     this.searchflag = false;
     this.searchret = {};
     this.recommendblog(this.recommendmethods);
+    if(this.$store.getters.getToken){
+      const decoded = jwt_decode(this.$store.getters.getToken);
+      console.log(decoded);
+      global.loginflag=true;
+      global.userName=decoded.name;
+      global.avatar=decoded.avatar;
+      global.userid=decoded.id;
+    }
   },
   methods: {
     tohisinfo(hisname) {
@@ -205,39 +214,6 @@ export default {
           alert(error);
         });
     },
-    // toResult(itemId) {
-    //   this.$router.push({ path: "/result/" + itemId });
-    // },
-    // toTest() {
-    //   this.$router.push("test");
-    // },
-    // toTest2() {
-    //   this.$router.push({
-    //     path: "/test",
-    //     query: {
-    //       id: 222
-    //     }
-    //   });
-    // },
-    // // ?id=21312312
-    // toTest3() {
-    //   this.$router.push({
-    //     name: "Test",
-    //     params: {
-    //       id: 222
-    //     }
-    //   });
-    // },
-    // addItem() {
-    //   this.items.push({ con: "new", id: "1231223" });
-    // },
-    // deleteItem() {
-    //   if (this.items.length != 1) {
-    //     this.items.pop();
-    //   } else {
-    //     alert("无法删除");
-    //   }
-    // }
   }
 };
 </script>

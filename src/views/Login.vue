@@ -34,6 +34,7 @@
 import axios from "axios";
 import Navigator from "@/components/Navigator.vue";
 import global from "@/components/global.vue";
+import jwt_decode from 'jwt-decode';
 export default {
   name: "Login",
   components: {
@@ -66,14 +67,18 @@ export default {
           alert(response.data.msg);
           if (response.data.msg == "登录成功!") {
             //alert(Navigator.username );
+            const decoded = jwt_decode(response.data.token);
+            console.log(decoded);
             global.loginflag = true;
-            global.username = that.uname;
-            global.userid = response.data.id;
+            global.username = decoded.name;
+            global.userid = decoded.id;
+            global.avatar=decoded.avater;
             that.$store.commit('setToken',JSON.stringify(response.data.token));
             //alert(Navigator.username );
             //this.forceUpdate();
             //this.$root.username = that.uname;
             //this.$root.loginflag = true;
+            
             that.$router.push({
               path: "/home"
             });

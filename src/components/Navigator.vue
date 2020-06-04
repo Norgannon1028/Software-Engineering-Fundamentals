@@ -11,7 +11,7 @@
       <el-menu-item index="home" @click="toHome" >
         首页
       </el-menu-item>
-      <el-menu-item index="write" @click="toWrite" v-if="loginflag == true">
+      <el-menu-item index="write" @click="toWrite" v-if="loginflag">
         新建博文
       </el-menu-item>
       <el-menu-item index="blog" v-if="activeIndex == 'blog'">
@@ -20,22 +20,22 @@
       <el-menu-item index="comment" v-if="activeIndex == 'comment'">
         全部评论
       </el-menu-item>
-      <el-menu-item style="float:right" index="dropout" @click="drop" v-if="loginflag == true"
+      <el-menu-item style="float:right" index="dropout" @click="drop" v-if="loginflag"
         >注销</el-menu-item
       >
-      <el-menu-item style="float:right" index="changepassword" @click="toChangepwd" v-if="loginflag == true"
+      <el-menu-item style="float:right" index="changepassword" @click="toChangepwd" v-if="loginflag"
         >修改密码</el-menu-item
       >
-      <el-menu-item style="float:right" index="info" @click="toInfo" v-if="loginflag == true"
+      <el-menu-item style="float:right" index="info" @click="toInfo" v-if="loginflag"
         >用户空间</el-menu-item
       >
-      <el-menu-item style="float:right" v-if="loginflag == true"
+      <el-menu-item style="float:right" v-if="loginflag"
         >欢迎:{{ username }}</el-menu-item
       >
-      <el-menu-item style="float:right" index="signup" @click="toSignup" v-if="loginflag == false">
+      <el-menu-item style="float:right" index="signup" @click="toSignup" v-if="!loginflag">
         注册
       </el-menu-item>
-      <el-menu-item style="float:right" index="login" @click="toLogin" v-if="loginflag == false">
+      <el-menu-item style="float:right" index="login" @click="toLogin" v-if="!loginflag">
         登录
       </el-menu-item>
     </el-menu>
@@ -84,9 +84,10 @@ export default {
       this.$router.push({ path: "/changepassword" });
     },
     drop(){
-      global.username="",
-      global.loginflag=false,
-      this.toHome()
+      global.username="";
+      global.loginflag=false;
+      localStorage.clear();
+      location. reload();
     }
   }
 };

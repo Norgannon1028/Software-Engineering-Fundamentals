@@ -20,9 +20,10 @@ export default new Vuex.Store({
   //判断是否有token,如果没有重新赋值，返回给state的token
   getToken(state) {
     if (!state.token) {
-      state.token = localStorage.getItem('token')
+      state.token = localStorage.getItem('token');
+      return state.token
     }
-    return state.token
+    return null
     }
   },
   actions: {
