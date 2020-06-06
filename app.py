@@ -282,7 +282,7 @@ def getinfo():
          'fansnum':fansnum,
          'follownum':follownum
     }    
-    #print(response.email)
+    #print(response.old)
     print(response)
     return jsonify(response)
 
@@ -364,18 +364,7 @@ def info():
         sex=j_data.get("sex")
         tmp = User.query.filter(User.username == uname).update({"old":age,"sex":sex})
         db.session.commit()
-        info = User.query.filter(User.username == uname).first()
-        print("here")
-        print(info)
-        print("here")
-    response={
-         'name':info.username,
-         'sex':info.sex,
-         'old':info.old,
-         'email':info.email
-    }    
-    print(response)
-    return jsonify(response)
+    return response
 
 #发送安全代码验证邮件
 @app.route('/verification', methods=['GET','POST'])

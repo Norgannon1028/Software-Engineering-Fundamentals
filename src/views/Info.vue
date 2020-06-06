@@ -1,13 +1,6 @@
 <template>
   <div class="info">
     <Navigator return="info" />
-    <div v-if="myinfoflag==false && loginflag==true">
-      <el-button style="float:left" @click="tomyinfo">
-            返回我的空间
-      </el-button>
-      <br />
-      <br />
-    </div>
     <div style="margin-top: 15px;">
       <span> 用户名: </span>
       <span> {{uname}} </span>
@@ -27,64 +20,30 @@
         <img v-if="image_url" :src="image_url" class="avatar">
       <i v-else class="el-icon-plus avatar-uploader-icon"></i>
       </el-upload>
-      <span>性别:</span>
-      <span v-if="changeflag == false">{{image_url}} {{sex}} </span>
-      <el-input
-        placeholder="sex"
-        v-model="sex"
-        style="width:60%"
-        class="input-with-select"
-        v-if="changeflag == true"
-      ></el-input>
+      <div>
+        <template>
+          <el-radio v-model="sex" label="1">男</el-radio>
+          <el-radio v-model="sex" label="0">女</el-radio>
+        </template>
+      </div>
       <br />
-      <br />
-      <span>年龄:</span>
-      <span v-if="changeflag == false"> {{age}} </span>
-      <el-input
-        placeholder="age"
-        v-model="age"
-        style="width:60%"
-        class="input-with-select"
-        v-if="changeflag == true"
-      ></el-input>
-      <br />
-      <br />
-      <span @click="tofans()">粉丝数:{{fansnum}}</span>
-      <br />
-      <br />
-      <span @click="tofollows()">关注数:{{follownum}}</span>
-      <br />
-      <br />
-      <el-button type="primary" @click="changeinfo()" v-if="changeflag == false && myinfoflag==true"
-        >修改
-      </el-button>
+      <el-form
+        :model="info_form"
+        :rules="rules"
+        ref="info_form"
+        label-width="100px"
+        class="changeinfo"
+      >
+        <el-form-item label="年龄" prop="age">
+          <el-input v-model="info_form.age" type="number"></el-input>
+        </el-form-item> 
+      </el-form>
       <el-button
         type="primary"
-        @click="test_ajax()"
-        v-if="changeflag == true"
+        @click="confirm()"
         >确认
       </el-button>
-      <el-button @click="resetForm()" v-if="changeflag == true">取消</el-button>
-    </div>
-    <div>
-      <el-button type="primary" @click="followhim()" v-if="followflag == false && myinfoflag==false && loginflag==true"
-          >关注
-      </el-button>
-      <el-button @click="disfollowhim()" v-if="followflag == true && myinfoflag==false && loginflag==true"
-          >取消关注
-      </el-button>
-    </div>
-    <div
-        class="allhisblogs"
-        v-for="item in hisblogs.data"
-        :key="item.id"
-      >
-      <br/>
-        <p @click="tothisblog(item.id)">文章标题：{{ item.title }}</p>
-        <p>关键词：{{ item.keyword }}</p>
-        <p>作者：{{ item.userid }} </p>
-        <p>被赞数：{{ item.like }}</p>
-        <p>发表时间：{{ item.time }}</p>
+      <el-button @click="tomyinfo()">取消</el-button>
     </div>
   </div>
 </template>
@@ -95,135 +54,63 @@
 import axios from "axios";
 import Navigator from "@/components/Navigator.vue";
 import global from "@/components/global.vue";
+import jwt_decode from 'jwt-decode';
 export default {
   name: "Info",
   components: {
     Navigator
   },
+  created() {
+    if(this.$store.getters.getToken){
+      const decoded = jwt_decode(this.$store.getters.getToken);
+      console.log(decoded);
+      global.loginflag=true;
+      global.username=decoded.name;
+      global.avatar=decoded.avatar;
+      global.userid=decoded.id;
+    }
+  },
   data() {
     return {
-      fansnum:0,
-      follownum:0,
+      sex:"1",
+      info_form:{
+        age: ""
+      },
+      rules:{
+        age:[
+          { required: true, message: '请输入0-99之间的数字', trigger: 'blur' },
+          { min: 1, max: 2, message: '请输入0-99之间的数字', trigger: 'blur' }
+        ],
+         sex: [
+           { required: true, message: '请输入0或1', trigger: 'blur' },
+           { min: 0, max: 1, message: '请输入0或1', trigger: 'blur' }
+           ]
+        // email:[
+        //   { required: true, message: '请输入邮箱地址', trigger: 'blur' },
+        //   { type: 'email', message: '请输入正确的邮箱地址', trigger: ['blur', 'change'] }
+        // ],
+      },
       loginflag: global.loginflag,
-      changeflag: false,
       uname: "",
       email: "",
-      sex: "",
-      age: "",
       image_url:'',
-      hisblogs:{},
       myinfoflag:true,
       nowusername:global.username,
       followflag: true
     };
   },
   mounted(){
-    //alert("hi!");
-    this.uname = this.$route.params.username;
-    if(this.uname==global.username)
-    {
-      this.myinfoflag=true
-    }
-    else
-    {
-      this.myinfoflag=false
-    }
-    if(this.myinfoflag==false && this.loginflag==true)
-    {
-      this.checkfollow();
-    }
+    this.uname = global.username
     this.getinfo();
-    this.gethisblogs();
   },
   methods: {
-    tofollows() {
-      this.$router.push({
-        name: "Follows",
-        params: {
-          username: this.uname
-        }
-      });
-    },
-    tofans() {
-      this.$router.push({
-        name: "Fans",
-        params: {
-          username: this.uname
-        }
-      });
-    },
-    followhim() {
-      var that = this;
-      axios
-        .post("http://localhost:5000/followhim", {
-          hisname: that.uname,
-          myname: global.username
-        })
-        .then(function(response) {
-          if(response.data.msg=='关注成功！')
-          {
-            that.followflag=true;
-            that.fansnum+=1;
-            alert(response.data.msg)
-          }
-          else
-          {
-            alert(response.data.msg)
-          }
-        })
-        .catch(function(error) {
-          alert(error);
-        });
-    },
-    disfollowhim() {
-      var that = this;
-      axios
-        .post("http://localhost:5000/disfollowhim", {
-          hisname: that.uname,
-          myname: global.username
-        })
-        .then(function(response) {
-          if(response.data.msg=='取消关注成功！')
-          {
-            that.followflag=false;
-            that.fansnum-=1;
-            alert(response.data.msg)
-          }
-          else
-          {
-            alert(response.data.msg)
-          }
-        })
-        .catch(function(error) {
-          alert(error);
-        });
-    },
-    checkfollow() {
-      var that = this;
-      axios
-        .post("http://localhost:5000/checkfollow", {
-          hisname: that.uname,
-          myname: global.username
-        })
-        .then(function(response) {
-          if(response.data.followflag==true)
-          {
-            that.followflag=true;
-          }
-          else
-          {
-            that.followflag=false;
-          }
-        })
-        .catch(function(error) {
-          alert(error);
-        });
-    },
     tomyinfo() {
-      this.uname=global.username
-      this.myinfoflag=true
-      this.getinfo();
-      this.gethisblogs();
+      this.$router.push({
+        name: "Zone",
+        params: {
+          username: this.uname
+        }
+      });
     },
     gethisblogs() {
       var that = this;
@@ -238,15 +125,6 @@ export default {
           alert(error);
         });
     },
-    tothisblog(blogid)
-    {
-      this.$router.push({
-        name: "Blog",
-        params: {
-          id: blogid
-        }
-      });
-    },
     getinfo(){
       var that = this;
       axios
@@ -256,8 +134,8 @@ export default {
         .then(function(response) {
           //that.$set()
           that.email=response.data.email;
-          that.age=response.data.old;
-          that.sex=response.data.sex;
+          that.info_form.age=response.data.old;
+          that.sex=String(response.data.sex);
           that.fansnum=response.data.fansnum;
           that.follownum=response.data.follownum;
           //alert(response)
@@ -269,32 +147,21 @@ export default {
           alert(error);
         });
     },
-    test_ajax() {
+    confirm() {
       var that = this;
       axios
         .post("http://localhost:5000/info", {
           username: that.uname,
-          age: that.age,
+          age: that.info_form.age,
           sex: that.sex
         })
-        .then(function(response) {
-          that.age=response.data.old;
-          that.sex=response.data.sex;
-          that.changeflag = false;
-          // if (response.data.name == "登录成功!") {
-          //   Navigator.data.loginflag = true;
-          // }
+        .then(function() {
+          alert("修改成功！");
+          that.tomyinfo();
         })
         .catch(function(error) {
           alert(error);
         });
-    },
-    changeinfo(){
-      this.changeflag = true;
-      //alert(this.changeflag);
-    },
-    resetForm() {
-      this.changeflag = false;
     },
     handleAvatarSuccess(response,file) {
         alert(response.data.code);

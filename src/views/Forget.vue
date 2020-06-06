@@ -1,33 +1,26 @@
 <template>
-  <div class="signup">
-    <Navigator return="signup" />
+  <div class="forget">
+    <Navigator return="forget" />
     <div>
       <el-form
-        :model="regist_form"
+        :model="rep_form"
         :rules="rules"
-        ref="regist_form"
+        ref="rep_form"
         label-width="100px"
-        class="signup"
+        class="forget"
       >
         <el-form-item label="用户名" prop="uname">
-          <el-input v-model="regist_form.uname"></el-input>
+          <el-input v-model="rep_form.uname"></el-input>
         </el-form-item> 
-        <el-form-item label="密码" prop="passwd1">
-          <el-input type="password" v-model="regist_form.passwd1"></el-input>
-        </el-form-item> 
-        <el-form-item label="重复密码" prop="passwd2">
-          <el-input type="password" v-model="regist_form.passwd2"></el-input>
-        </el-form-item>
-        <el-form-item label="邮箱" prop="email">
-          <el-input v-model="regist_form.email"></el-input>
+        <el-form-item label="注册邮箱" prop="email">
+          <el-input v-model="rep_form.email"></el-input>
           <el-button type="primary" :disabled="send_status" @click="verify">{{send_message}}</el-button>
         </el-form-item>
         <el-form-item label="验证码" prop="code">
-          <el-input v-model="regist_form.code"></el-input>
+          <el-input v-model="rep_form.code"></el-input>
         </el-form-item>
         <el-form-item>
-          <el-button type="primary" @click="test_ajax()">注册</el-button>
-          <el-button @click="resetForm('regist_form')">重置</el-button>
+          <el-button type="primary" @click="repassword()">重置密码</el-button>
         </el-form-item>
       </el-form>
     </div>
@@ -40,7 +33,7 @@ import axios from "axios";
 import Navigator from "@/components/Navigator.vue";
 import jwt_decode from 'jwt-decode';
 export default {
-  name: "Regist",
+  name: "Forget",
   components: {
     Navigator
   },
@@ -55,15 +48,6 @@ export default {
     }
   },
   data() {
-      var checkpassword = (rule, value, callback) => {
-        if (value === '') {
-          callback(new Error('请重复输入密码'));
-        } else if (value !== this.regist_form.passwd1) {
-          callback(new Error('两次输入密码不一致!'));
-        } else {
-          callback();
-        }
-      };
       var checkcode = (rule, value, callback) => {
         if (value !== this.code) {
           callback(new Error('验证码错误'));
@@ -72,10 +56,8 @@ export default {
         }
       };
     return {
-      regist_form:{
+      rep_form:{
         uname: "",
-        passwd1: "",
-        passwd2: "",
         email: "",
         code:""
       },
@@ -84,15 +66,6 @@ export default {
           { required: true, message: '请输入用户名', trigger: 'blur' },
           { min: 3, max: 12, message: '长度在 3 到 12 个字符', trigger: 'blur' }
         ],
-        passwd1: [
-          { required: true, message: '请输入密码', trigger: 'blur' },
-          { min: 6, max: 15, message: '长度在 6 到 15 个字符', trigger: 'blur' }
-          ],
-        passwd2: [
-            { required: true, message: '请重复输入密码', trigger: 'blur' },
-            { min: 6, max: 15, message: '长度在 6 到 15 个字符', trigger: 'blur' },
-            { validator: checkpassword, trigger: 'blur' }
-          ],
         email:[
           { required: true, message: '请输入邮箱地址', trigger: 'blur' },
           { type: 'email', message: '请输入正确的邮箱地址', trigger: ['blur', 'change'] }
@@ -108,18 +81,16 @@ export default {
     };
   },
   methods: {
-    test_ajax() {
+    repassword() {
       var that = this;
       axios
-        .post("http://localhost:5000/regist", {
-          username: that.regist_form.uname,
-          password1: that.regist_form.passwd1,
-          password2: that.regist_form.passwd2,
-          email: that.regist_form.email
+        .post("http://localhost:5000/repassword", {
+          username: that.rep_form.uname,
+          email: that.rep_form.email
         })
         .then(function(response) {
-          alert(response.data.msg);
-          if (response.data.msg == "注册成功!")
+          alert(response.data.message);
+          if (response.data.message == "新的密码已经发至您的邮箱，请注意查收并及时修改～")
             that.$router.push({ path: "/login" });
         })
         .catch(function(error) {
@@ -131,7 +102,7 @@ export default {
       that.code=Math.floor(Math.random() * (999999 - 100000) + 100000);
       axios
         .post("http://localhost:5000/verification", {
-          email: that.regist_form.email,
+          email: that.rep_form.email,
           code:that.code
         })
         .then(function(response) {
@@ -142,9 +113,6 @@ export default {
         .catch(function(error) {
           alert(error);
         });
-    },
-    resetForm(formName) {
-      this.$refs[formName].resetFields();
     },
     randomNum(min, max) {
         return Math.floor(Math.random() * (max - min) + min)

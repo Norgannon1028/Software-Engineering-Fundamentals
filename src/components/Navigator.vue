@@ -26,8 +26,11 @@
       <el-menu-item style="float:right" index="changepassword" @click="toChangepwd" v-if="loginflag"
         >修改密码</el-menu-item
       >
-      <el-menu-item style="float:right" index="info" @click="toInfo" v-if="loginflag"
+      <el-menu-item style="float:right" index="zone" @click="toInfo" v-if="loginflag"
         >用户空间</el-menu-item
+      >
+      <el-menu-item style="float:right" index="info" v-if="activeIndex=='info'"
+        >信息修改</el-menu-item
       >
       <el-menu-item style="float:right" v-if="loginflag"
         >欢迎:{{ username }}</el-menu-item
@@ -71,7 +74,7 @@ export default {
     },
     toInfo() {
       this.$router.push({
-        name: "Info",
+        name: "Zone",
         params: {
           username: global.username
         }
@@ -86,6 +89,7 @@ export default {
     drop(){
       global.username="";
       global.loginflag=false;
+      this.toLogin();
       localStorage.clear();
       location. reload();
     }

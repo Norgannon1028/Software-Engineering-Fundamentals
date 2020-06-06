@@ -64,9 +64,16 @@
         </el-dropdown-menu>
       </el-dropdown>
       <br />
-      <div class="item" v-for="item in searchret.data" :key="item.id" @click="tothisblog(item.id)">
-        <p>文章标题：{{ item.title }} 关键词：{{ item.keyword }}</p>
-        <p>作者：{{ item.userid }} 被赞数：{{ item.like }}</p>
+      <div
+        class="search"
+        v-for="item in searchret.data"
+        :key="item.id"
+      >
+      <br/>
+        <p @click="tothisblog(item.id)">文章标题：{{ item.title }}</p>
+        <p>关键词：{{ item.keyword }}</p>
+        <p @click="tohisinfo(item.userid)">作者：{{ item.userid }} </p>
+        <p>被赞数：{{ item.like }}</p>
         <p>发表时间：{{ item.time }}</p>
       </div>
     </div>
@@ -137,7 +144,7 @@ export default {
       const decoded = jwt_decode(this.$store.getters.getToken);
       console.log(decoded);
       global.loginflag=true;
-      global.userName=decoded.name;
+      global.username=decoded.name;
       global.avatar=decoded.avatar;
       global.userid=decoded.id;
     }
@@ -145,7 +152,7 @@ export default {
   methods: {
     tohisinfo(hisname) {
       this.$router.push({
-        name: "Info",
+        name: "Zone",
         params: {
           username: hisname
         }

@@ -57,6 +57,7 @@
 import Navigator from "@/components/Navigator.vue";
 import axios from "axios";
 import global from "@/components/global.vue";
+import jwt_decode from 'jwt-decode';
 
 export default {
   name: "Blog",
@@ -82,6 +83,14 @@ export default {
   },
   created() {
     this.blog_id = parseInt(this.$route.params.id);
+    if(this.$store.getters.getToken){
+      const decoded = jwt_decode(this.$store.getters.getToken);
+      console.log(decoded);
+      global.loginflag=true;
+      global.username=decoded.name;
+      global.avatar=decoded.avatar;
+      global.userid=decoded.id;
+    }
     var that=this;
     axios
         .post("http://localhost:5000/getblog", {
@@ -117,7 +126,7 @@ export default {
   methods: {
     tohisinfo(hisname) {
       this.$router.push({
-        name: "Info",
+        name: "Zone",
         params: {
           username: hisname
         }

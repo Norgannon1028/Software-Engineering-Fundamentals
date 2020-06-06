@@ -1,19 +1,23 @@
 <template>
-  <div class="comment">
-    <Navigator return="comment" />
-    <el-button style="float:left" @click="backtothisblog(blog_id)">返回</el-button>
+  <div class="follower">
+    <Navigator return="zone" />
+    <el-button style="float:left" @click="backtohisinfo(username)">返回信息界面</el-button>
     <br/>
     <br/>
     <div
-        class="comments"
-        v-for="item in allcomments.data"
+        class="follower"
+        v-for="item in allfans.data"
         :key="item.id"
       >
       <br />
-        <p>评论内容：{{ item.content }}</p>
-        <p @click="tohisinfo(item.userid)">作者：{{ item.userid }}</p>
-        <p>发表时间：{{ item.time }}</p>
+      <div @click="tohisinfo(item.username)">
+        <p>用户名：{{ item.username }}</p>
+        <p>邮箱：{{ item.email }}</p>
+        <p v-if="item.sex==1">性别：男</p>
+        <p v-if="item.sex==0">性别：女</p>
+        <p>年龄：{{ item.old }}</p>
         <br />
+      </div>
     </div>
   </div>
 </template>
@@ -24,18 +28,19 @@ import axios from "axios";
 import Navigator from "@/components/Navigator.vue";
 import jwt_decode from 'jwt-decode';
 export default {
-  name: "Blog",
+  name: "Follower",
   components: {
     Navigator
   },
   data() {
     return {
-      blog_id:1,
-      allcomments:{}
+      username:"",
+      allfans:{}
     };
   },
   created() {
-    this.blog_id = parseInt(this.$route.params.id);
+    this.username = this.$route.params.username;
+    //alert(this.username)
     if(this.$store.getters.getToken){
       const decoded = jwt_decode(this.$store.getters.getToken);
       console.log(decoded);
@@ -44,36 +49,35 @@ export default {
       global.avatar=decoded.avatar;
       global.userid=decoded.id;
     }
-    //alert(this.blog_id)
-    this.showallcomments();
+    this.showallfans();
    // this.loadcomments();  
 
   },
   methods: {
     tohisinfo(hisname) {
       this.$router.push({
-        name: "Info",
+        name: "Zone",
         params: {
           username: hisname
         }
       });
     },
-    backtothisblog(blogid) {
+    backtohisinfo(hisname) {
         this.$router.push({
-        name: "Blog",
+        name: "Zone",
         params: {
-          id: blogid
+          username: hisname
         }
       });
     },
-    showallcomments() {
+    showallfans() {
        var that = this;
         axios
-        .post("http://localhost:5000/allcomments", {
-          blogid: this.blog_id
+        .post("http://localhost:5000/allfans", {
+           username: this.username
         })
         .then(function(response) {
-          that.allcomments=response
+          that.allfans=response
         })
         .catch(function(error) {
           alert(error);
