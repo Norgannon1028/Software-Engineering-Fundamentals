@@ -1,32 +1,31 @@
 <template>
   <div class="login">
     <Navigator return="login" />
-    <div style="margin-top: 15px;">
-      用户名:<el-input
+      <el-form ref="loginForm" :model="form" :rules="rules" label-width="80px" class="login-box">
+      <h3 class="login-title">要登陆了咕咕</h3>
+      <el-form-item label="账号" prop="username">  
+      <el-input
         placeholder="username"
         v-model="uname"
-        style="width:60%"
         class="input-with-select"
       ></el-input>
-      <br />
-      <br />
-      密码:
+      </el-form-item>
+      <el-form-item label="密码" prop="password">
       <el-input
         type="password"
         placeholder="password"
         v-model="passwd"
-        style="width:60%"
         class="input-with-select"
       ></el-input>
-      <br />
-      <br />
-        <el-button type="primary" icon="el-icon-remove" @click="test_ajax">
-          登录
-        </el-button>
+      </el-form-item>
+      <el-form-item >
+        <el-button class="submitBtn" type="primary" icon="el-icon-remove" @click="test_ajax">登录</el-button>
+        </el-form-item>
         <el-button v-if="showrepassword==true" @click="toRepassword">
           忘记密码？
         </el-button>
-    </div>
+        </el-form>
+        
   </div>
 </template>
 
@@ -97,10 +96,28 @@ export default {
 </script>
 
 <style scoped>
-.each {
-  width: 30%;
-  border: 1px solid black;
-  margin: 5px;
-  cursor: pointer;
-}
+.login-box {
+    border: 1px solid #DCDFE6;
+    width: 350px;
+    margin: 180px auto;
+    padding: 35px 35px 15px 0px;
+    border-radius: 5px;
+    -webkit-border-radius: 5px;
+    -moz-border-radius: 5px;
+    box-shadow: 0 0 25px #909399;
+  }
+
+.login-title {
+    text-align: center;
+    margin: 0 auto 40px auto;
+    padding: 0px 0px 0px 10px;
+    color: #303133;
+  }
+
+.submitBtn {
+      
+      background-color: transparent;
+      color: #39f;
+      width: 200px;
+    }
 </style>

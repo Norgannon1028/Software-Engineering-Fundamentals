@@ -7,8 +7,9 @@
         :rules="rules"
         ref="regist_form"
         label-width="100px"
-        class="signup"
+        class="signup-box"
       >
+      <h3 class="box-title">注册</h3>
         <el-form-item label="用户名" prop="uname">
           <el-input v-model="regist_form.uname"></el-input>
         </el-form-item> 
@@ -20,14 +21,19 @@
         </el-form-item>
         <el-form-item label="邮箱" prop="email">
           <el-input v-model="regist_form.email"></el-input>
-          <el-button type="primary" :disabled="send_status" @click="verify">{{send_message}}</el-button>
+          
+        </el-form-item>
+        <el-form-item>
+          <el-button class="button" type="primary" :disabled="send_status" @click="verify">{{send_message}}</el-button>
         </el-form-item>
         <el-form-item label="验证码" prop="code">
           <el-input v-model="regist_form.code"></el-input>
         </el-form-item>
         <el-form-item>
-          <el-button type="primary" @click="test_ajax()">注册</el-button>
-          <el-button @click="resetForm('regist_form')">重置</el-button>
+          <el-button class="submitBtn" type="primary" @click="test_ajax()">注册</el-button>
+        </el-form-item>
+        <el-form-item>
+          <el-button class="button" @click="resetForm('regist_form')">重置</el-button>
         </el-form-item>
       </el-form>
     </div>
@@ -154,10 +160,28 @@ export default {
 </script>
 
 <style scoped>
-.each {
-  width: 30%;
-  border: 1px solid black;
-  margin: 5px;
-  cursor: pointer;
+.signup-box {
+    border: 1px solid #DCDFE6;
+    width: 350px;
+    margin: 180px auto;
+    padding: 35px 70px 15px 0px;
+    border-radius: 5px;
+    -webkit-border-radius: 5px;
+    -moz-border-radius: 5px;
+    box-shadow: 0 0 25px #909399;
+  }
+.button{
+  margin: 100px auto 10 auto;
 }
+.box-title {
+    text-align: center;
+    margin: 0 auto 40px auto;
+    padding: 0px 0px 0px 50px;
+    color: #303133;
+  }
+.submitBtn {
+      background-color: transparent;
+      color: #39f;
+      width: 200px;
+    }
 </style>

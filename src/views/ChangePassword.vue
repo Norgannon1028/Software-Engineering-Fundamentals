@@ -7,8 +7,9 @@
         :rules="rules"
         ref="change_form"
         label-width="100px"
-        class="changepassword"
+        class="box"
       >
+      <h3 class="box-title">修改密码</h3>
         <el-form-item label="用户名" prop="uname">
           <el-input v-model="change_form.uname"></el-input>
         </el-form-item> 
@@ -22,7 +23,7 @@
           <el-input type="password" v-model="change_form.passwd2"></el-input>
         </el-form-item>
         <el-form-item>
-          <el-button type="primary" @click="change()">确认修改</el-button>
+          <el-button class="submitBtn" type="primary" @click="change()">确认修改</el-button>
         </el-form-item>
       </el-form>
     </div>
@@ -33,21 +34,10 @@
 <script>
 import axios from "axios";
 import Navigator from "@/components/Navigator.vue";
-import jwt_decode from 'jwt-decode';
 export default {
-  name: "ChangePassword",
+  name: "Changepassword",
   components: {
     Navigator
-  },
-  created() {
-    if(this.$store.getters.getToken){
-      const decoded = jwt_decode(this.$store.getters.getToken);
-      console.log(decoded);
-      global.loginflag=true;
-      global.username=decoded.name;
-      global.avatar=decoded.avatar;
-      global.userid=decoded.id;
-    }
   },
   data() {
       var checkpassword = (rule, value, callback) => {
@@ -113,11 +103,27 @@ export default {
 };
 </script>
 
-<style scoped>
-.each {
-  width: 30%;
-  border: 1px solid black;
-  margin: 5px;
-  cursor: pointer;
-}
+<style scoped>box
+.box-title {
+    text-align: center;
+    margin: 0 auto ;
+    padding: 0px 0px 0px 0px;
+    color: #303133;
+  }
+.box {
+    border: 1px solid #DCDFE6;
+    width: 350px;
+    margin: 180px auto;
+    padding: 35px 35px 15px 35px;
+    border-radius: 5px;
+    -webkit-border-radius: 5px;
+    -moz-border-radius: 5px;
+    box-shadow: 0 0 25px #909399;
+  }
+.submitBtn {
+      
+      background-color: transparent;
+      color: #39f;
+      width: 200px;
+    }
 </style>
