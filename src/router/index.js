@@ -3,13 +3,15 @@ import VueRouter from "vue-router";
 import Home from "../views/Home.vue";
 import Login from "../views/Login.vue";
 import Signup from "../views/Signup.vue";
-import Info from "../views/Info.vue";
+import Zone from "../views/Zone.vue";
 import Write from "../views/Write.vue";
 import Blog from "../views/Blog.vue";
-import Repassword from "../views/Repassword.vue";
-import Changepassword from "../views/Changepassword.vue";
+import Forget from "../views/Forget.vue";
+import ChangePassword from "../views/ChangePassword.vue";
 import Comment from "../views/Comment.vue";
-
+import Follow from "../views/Follow.vue";
+import Follower from "../views/Follower.vue";
+import Info from "../views/Info.vue";
 Vue.use(VueRouter);
 const routes = [
   // 单纯的切换，redirect对应的是name
@@ -29,19 +31,29 @@ const routes = [
     component: Comment
   },
   {
+    path: "/follow",
+    name: "Follow",
+    component: Follow
+  },
+  {
+    path: "/follower",
+    name: "Follower",
+    component: Follower
+  },
+  {
     path: "/login",
     name: "Login",
     component: Login
   },
   {
-    path: "/repassword",
-    name: "Repassword",
-    component: Repassword
+    path: "/forget",
+    name: "Forget",
+    component: Forget
   },
   {
     path: "/changepassword",
-    name: "Changepassword",
-    component: Changepassword
+    name: "ChangePassword",
+    component: ChangePassword
   },
   {
     path: "/signup",
@@ -49,9 +61,9 @@ const routes = [
     component: Signup
   },
   {
-    path: "/info",
-    name: "Info",
-    component: Info
+    path: "/zone",
+    name: "Zone",
+    component: Zone
   },
   {
     path: "/write/:id",
@@ -63,17 +75,10 @@ const routes = [
     name: "Blog",
     component: Blog
   },
-  // 在添加组件时再引用vue文件使用
-  // {
-  //   path: "/test",
-  //   name: "Test",
-  //   component: () => import("../views/Test.vue")
-  // },
-  // 同上，不过此时需要有一个id的参数才能显示，参数可获取
   {
-    path: "/result/:id",
-    name: "Result",
-    component: () => import("../views/Result.vue")
+    path: "/info",
+    name: "Info",
+    component: Info
   }
 ];
 

@@ -69,7 +69,7 @@ export default {
     showallcomments() {
        var that = this;
         axios
-        .post("http://localhost:5000/allcomments", {
+        .post("http://127.0.0.1:5000/allcomments", {
           blogid: this.blog_id
         })
         .then(function(response) {

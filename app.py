@@ -276,6 +276,7 @@ def getinfo():
         follownum=db.session.query(Follow).filter(Follow.fromid==userid).count()
     response={
          'name':info.username,
+         'face':info.avatar,
          'sex':info.sex,
          'old':info.old,
          'email':info.email,
@@ -414,6 +415,8 @@ def recommend():
             #print(tmp.username)
             blog=blog.to_dict()
             blog['userid']=tmp.username
+            blog['face']=tmp.avatar
+            #blog['id']=tmp.avatar
             #print(blog)
             response['blog'+str(i)]=blog
             i+=1
@@ -445,6 +448,7 @@ def searchblog():
             #print(tmp.username)
             blog=blog.to_dict()
             blog['userid']=tmp.username
+            blog['face']=tmp.avatar
             #print(blog)
             response['blog'+str(i)]=blog
             i+=1
@@ -496,6 +500,7 @@ def allhisblog():
             #print(tmp.username)
             blog=blog.to_dict()
             blog['userid']=tmp.username
+            blog['face']=tmp.avatar
             #print(blog)
             response['blog'+str(i)]=blog
             i+=1
@@ -528,6 +533,7 @@ def loadcomments():
             print(tmp)
             comment=comment.to_dict()
             comment['userid']=tmp.username
+            comment['face']=tmp.avatar
             #print(blog)
             response['comment'+str(i)]=comment
             i+=1
@@ -806,6 +812,9 @@ def getblog():
         j_data=request.json
         id=j_data.get("blogid")
         thisuserid=j_data.get("thisuser")
+        print("hi")
+        print(id)
+        print("hi")
         blog=Blog.query.filter(Blog.id==id).first()
         userid=blog.userid
         user=User.query.filter(User.id==userid).first()
@@ -816,6 +825,7 @@ def getblog():
         else:
             likeflag=True
     response={
+        'face':user.avatar,
         'blog':retblog,
         'writer':user.username,
         'likeflag':likeflag

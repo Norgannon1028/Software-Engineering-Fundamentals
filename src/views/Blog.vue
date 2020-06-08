@@ -5,6 +5,7 @@
     <div class="item">
       <p>文章标题：{{blog_title}} 关键词：{{ blog_keyword }}</p>
       <p @click="tohisinfo(blog_author)">作者：{{ blog_author }}</p>
+      <el-avatar src="this.blog_authorface"></el-avatar>
       <p>被赞数：{{ blog_like }}</p>
 
       <el-button type="primary" @click="likethisbolg" v-if="likeflag==false && loginflag==true">点赞</el-button>
@@ -26,6 +27,7 @@
       <div class="item" v-for="item in showcomment.data" :key="item.id">
         <p>评论内容：{{ item.content }}</p>
         <p @click="tohisinfo(item.userid)">作者：{{ item.userid }}</p>
+        <el-avatar src="item.face"></el-avatar>
         <p>发表时间：{{ item.time }}</p>
         <br />
       </div>
@@ -75,6 +77,7 @@ export default {
       blog_like:0,
       blog_md:'',
       blog_keyword:'',
+      blog_authorface:'',
       likeflag:false,
       writingcomment:false,
       comment:"",
@@ -83,6 +86,7 @@ export default {
   },
   created() {
     this.blog_id = parseInt(this.$route.params.id);
+    //alert(this.blog_id)
     if(this.$store.getters.getToken){
       const decoded = jwt_decode(this.$store.getters.getToken);
       console.log(decoded);
@@ -93,7 +97,7 @@ export default {
     }
     var that=this;
     axios
-        .post("http://localhost:5000/getblog", {
+        .post("http://127.0.0.1:5000/getblog", {
           blogid: that.blog_id,
           thisuser: global.userid
         })
@@ -105,13 +109,14 @@ export default {
           that.blog_like=response.data.blog.like;
           that.blog_md=response.data.blog.link;
           that.blog_keyword=response.data.blog.keyword;
+          that.blog_authorface=response.data.face;
           that.likeflag=response.data.likeflag;
         })
         .catch(function(error) {
           alert(error);
         });
       axios
-        .post("http://localhost:5000/loadcomments", {
+        .post("http://127.0.0.1:5000/loadcomments", {
           blogid: that.blog_id
         })
         .then(function(response) {
@@ -175,7 +180,7 @@ export default {
       {
         var that=this;
         axios
-          .post("http://localhost:5000/addcomment", {
+          .post("http://127.0.0.1:5000/addcomment", {
             blogid: that.blog_id,
             thisuser: global.userid,
             commenttext: that.comment
@@ -198,7 +203,7 @@ export default {
         this.writingcomment=false;
       }
       axios
-        .post("http://localhost:5000/loadcomments", {
+        .post("http://127.0.0.1:5000/loadcomments", {
           blogid: that.blog_id
         })
         .then(function(response) {
@@ -211,7 +216,7 @@ export default {
     likethisbolg() {
       var that=this;
       axios
-        .post("http://localhost:5000/addlike", {
+        .post("http://127.0.0.1:5000/addlike", {
           blogid: that.blog_id,
           thisuser: global.userid
         })
@@ -234,7 +239,7 @@ export default {
     dislikethisbolg() {
       var that=this;
       axios
-        .post("http://localhost:5000/dislike", {
+        .post("http://127.0.0.1:5000/dislike", {
           blogid: that.blog_id,
           thisuser: global.userid
         })
@@ -260,7 +265,7 @@ export default {
     searchblog() {
       var that = this;
       axios
-        .post("http://localhost:5000/blog", {
+        .post("http://127.0.0.1:5000/blog", {
           searchkey: that.searchkey
         })
         .then(function(response) {
