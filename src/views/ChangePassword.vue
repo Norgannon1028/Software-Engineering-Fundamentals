@@ -34,10 +34,21 @@
 <script>
 import axios from "axios";
 import Navigator from "@/components/Navigator.vue";
+import jwt_decode from 'jwt-decode'
 export default {
   name: "Changepassword",
   components: {
     Navigator
+  },
+  created(){
+    if(this.$store.getters.getToken){
+      const decoded=jwt_decode(this.$store.getters.getToken);
+      console.log(decoded);
+      global.loginflag=true;
+      global.username=decoded.name;
+      global.avatar=decoded.avatar;
+      global.userid=decoded.id;
+    }
   },
   data() {
       var checkpassword = (rule, value, callback) => {

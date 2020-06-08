@@ -19,7 +19,7 @@
       ></el-input>
       </el-form-item>
       <el-form-item >
-        <el-button class="submitBtn" type="primary" icon="el-icon-remove" @click="test_ajax">登录</el-button>
+        <el-button class="submitBtn" type="primary" @click="test_ajax">登录</el-button>
         </el-form-item>
         <el-button v-if="showrepassword==true" @click="toRepassword">
           忘记密码？
@@ -53,7 +53,7 @@ export default {
   },
   methods: {
     toRepassword(){
-      this.$router.push({ path: "/repassword" });
+      this.$router.push({ path: "/Forget" });
     },
     test_ajax() {
       var that = this;
