@@ -8,7 +8,8 @@
       <br />
       <br />
     </div>
-    <div style="margin-top: 15px;">
+    <el-container>
+    <el-aside style="margin-top: 15px;" class="aside">
       <span> 用户名: </span>
       <span> {{uname}} </span>
       <br />
@@ -37,7 +38,6 @@
       <el-button type="primary" @click="changeinfo()" v-if="changeflag == false && myinfoflag==true"
         >修改
       </el-button>
-    </div>
     <div>
       <el-button type="primary" @click="followhim()" v-if="followflag == false && myinfoflag==false && loginflag==true"
           >关注
@@ -46,19 +46,25 @@
           >取消关注
       </el-button>
     </div>
+    </el-aside>
+    <el-main class="main">
     <div
         class="allhisblogs"
         v-for="item in hisblogs.data"
         :key="item.id"
       >
       <br/>
+      <div class="box">
         <p @click="tothisblog(item.id)">文章标题：{{ item.title }}</p>
         <p>关键词：{{ item.keyword }}</p>
         <p @click="tohisinfo(item.userid)">作者：{{ item.userid }} </p>
         <el-avatar src="item.face"></el-avatar>
         <p>被赞数：{{ item.like }}</p>
         <p>发表时间：{{ item.time }}</p>
+      </div>
     </div>
+  </el-main>
+   </el-container>
   </div>
 </template>
 
@@ -272,12 +278,6 @@ export default {
 </script>
 
 <style scoped>
-.each {
-  width: 30%;
-  border: 1px solid black;
-  margin: 5px;
-  cursor: pointer;
-}
 .avatar-uploader .el-upload {
     border: 1px dashed #d9d9d9;
     border-radius: 6px;
@@ -300,5 +300,37 @@ export default {
     width: 178px;
     height: 178px;
     display: block;
+  }
+  .box { 
+    border: 1px solid #DCDFE6;
+    margin: 0px auto;
+    padding: 10px 35px 15px 35px;
+    border-radius: 5px;
+    -webkit-border-radius: 5px;
+    -moz-border-radius: 5px;
+    box-shadow: 0 0 5px #909399;
+    opacity: 1
+  }
+  .aside { 
+    border: 1px solid #DCDFE6;
+    margin: 0px auto;
+    padding: 10px 35px 15px 35px;
+    border-radius: 5px;
+    -webkit-border-radius: 5px;
+    -moz-border-radius: 5px;
+    box-shadow: 0 0 5px #909399;
+    opacity: 1;
+    height: 600px;
+  }
+  .main{ 
+    border: 1px solid #DCDFE6;
+    margin: 0px auto;
+    margin-left: 30px;
+    padding: 0px 35px 15px 15px;
+    border-radius: 5px;
+    -webkit-border-radius: 5px;
+    -moz-border-radius: 5px;
+    box-shadow: 0 0 5px #909399;
+    opacity: 1
   }
 </style>

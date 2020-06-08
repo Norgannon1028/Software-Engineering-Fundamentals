@@ -1,21 +1,25 @@
 <template>
   <div class="home">
     <Navigator return="home" />
-    <div style="margin-top: 15px;">
+    
+    <div class="searchBox" style="margin-top: 15px;">
       <el-input
         placeholder="请输入搜索内容"
         v-model="searchkeynotuse"
-        class="input-with-select"
+        class="searchInput"
+        style="padding-left: 10px;"
+        @keydown.enter.native="searchblog(searchmethods)"
       >
         <el-button
+          class="searchButton"
           slot="append"
           icon="el-icon-search"
           @click="searchblog(searchmethods)"
+          
         ></el-button>
       </el-input>
     </div>
-    <br />
-    <div v-if="searchflag==false">
+    <div v-if="searchflag==false" style="padding: 10px 0px 0px 15px;">
       <div style="float:left;font-size:14px">
         排序方式：
       </div>
@@ -23,7 +27,7 @@
         <span class="el-dropdown-link">
           {{ recommendmethods }}<i class="el-icon-arrow-down el-icon--right"></i>
         </span>
-        <br />
+
         <el-dropdown-menu slot="dropdown">
           <el-dropdown-item command="最热门">最热门</el-dropdown-item>
           <el-dropdown-item command="最新">最新</el-dropdown-item>
@@ -32,6 +36,7 @@
             <el-dropdown-item divided>蚵仔煎</el-dropdown-item> -->
         </el-dropdown-menu>
       </el-dropdown>
+      
       <br />
       <div
         class="recommend"
@@ -39,11 +44,13 @@
         :key="item.id"
       >
       <br/>
+      <div class="box" @click="tothisblog(item.id)">
         <p @click="tothisblog(item.id)">文章标题：{{ item.title }}</p>
         <p>关键词：{{ item.keyword }}</p>
         <p @click="tohisinfo(item.userid)">作者：{{ item.userid }} </p>
         <p>被赞数：{{ item.like }}</p>
         <p>发表时间：{{ item.time }}</p>
+        </div>
       </div>
     </div>
     <div v-if="searchflag==true">
@@ -70,11 +77,13 @@
         :key="item.id"
       >
       <br/>
+      <div class="box" @click="tothisblog(item.id)">
         <p @click="tothisblog(item.id)">文章标题：{{ item.title }}</p>
         <p>关键词：{{ item.keyword }}</p>
         <p @click="tohisinfo(item.userid)">作者：{{ item.userid }} </p>
         <p>被赞数：{{ item.like }}</p>
         <p>发表时间：{{ item.time }}</p>
+        </div>
       </div>
     </div>
     <!-- <div id="list">
@@ -239,4 +248,23 @@ export default {
 .el-icon-arrow-down {
   font-size: 12px;
 }
+.searchBox{
+  
+  }
+  .searchInput{
+    
+  }
+  .searchButton{
+    
+  }
+  .box { 
+    border: 1px solid #DCDFE6;
+    margin: 0px auto;
+    padding: 10px 35px 15px 35px;
+    border-radius: 5px;
+    -webkit-border-radius: 5px;
+    -moz-border-radius: 5px;
+    box-shadow: 0 0 5px #909399;
+    opacity: 1
+  }
 </style>
