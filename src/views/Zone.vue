@@ -52,20 +52,20 @@
         v-for="item in hisblogs.data"
         :key="item.id"
       > 
-      <div class="box" @click="tothisblog(item.id)">
+      <div class="box">
         <div class="list_con">
-          <h5 @click="tothisblog(item.id)" tag="span" class="art-title">{{ item.title}}&nbsp; </h5>
+          <h5 @click="tothisblog(item.id)" tag="span" class="art-title">{{ item.title}} </h5>
         <div class="art-abstract">关键词：{{ item.keyword }}</div>
         <div style="display:flex"> 
             <el-avatar class="user-img" src="item.face"></el-avatar>
-          <br>
-          <div class="name" @click="tohisinfo(item.userid)">作者：{{ item.userid }} </div>
+            <br>
+            <div class="name" @click="tohisinfo(item.userid)">作者：{{ item.userid }} </div>
         </div>
         <div class="art-more">
           <div class="art-time"><i class="el-icon-time"></i>发表时间：{{ item.time }}</div>
           <div class="view"><i class="el-icon-star-on"></i>被赞数：{{ item.like }}</div>
         </div>
-        </div>
+      </div>
       </div>
     </div>
 
@@ -437,5 +437,10 @@ export default {
   .name{
     margin-top:10px ;
     margin-left: 5px;
+    cursor: pointer;
+  }
+  .name:hover{
+    padding-left: 10px;
+		color: #409EFF;
   }
 </style>

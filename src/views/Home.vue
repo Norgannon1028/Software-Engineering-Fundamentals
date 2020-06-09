@@ -43,7 +43,7 @@
         v-for="item in recommendret.data"
         :key="item.id"
       >
-      <div class="box" @click="tothisblog(item.id)">
+      <div class="box">
         <div class="list_con">
           <h5 @click="tothisblog(item.id)" tag="span" class="art-title">{{ item.title}} </h5>
         <div class="art-abstract">关键词：{{ item.keyword }}</div>
@@ -81,7 +81,7 @@
         :key="item.id"
       >
       <br/>
-      <div class="box" @click="tothisblog(item.id)">
+      <div class="box">
         <div class="list_con">
           <h5 @click="tothisblog(item.id)" tag="span" class="art-title">{{ item.title}} </h5>
           <div class="art-abstract">关键词：{{ item.keyword }}</div>
@@ -282,5 +282,13 @@ export default {
 		padding-left: 10px;
 		color: #409EFF;
 	}
-	
+	.name{
+    margin-top:10px ;
+    margin-left: 5px;
+    cursor: pointer;
+  }
+  .name:hover{
+    padding-left: 10px;
+		color: #409EFF;
+  }
 </style>
