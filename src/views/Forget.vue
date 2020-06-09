@@ -127,8 +127,8 @@ export default {
 <style scoped>
 .box-title {
     text-align: center;
-    margin: 10px auto 10px auto;
-    padding: 0px 0px 0px 0px;
+    margin: 0 auto 0px auto;
+    padding: 0px 0px 0px 10px;
     color: #303133;
   }
 .box { 

@@ -9,7 +9,7 @@
         label-width="100px"
         class="box"
       >
-      <h3 class="box-title">修改密码</h3>
+        <h3 class="box-title">修改密码</h3>
         <el-form-item label="用户名" prop="uname">
           <el-input v-model="change_form.uname"></el-input>
         </el-form-item> 
@@ -114,13 +114,7 @@ export default {
 };
 </script>
 
-<style scoped>box
-.box-title {
-    text-align: center;
-    margin: 0 auto ;
-    padding: 0px 0px 0px 0px;
-    color: #303133;
-  }
+<style scoped>
 .box {
     border: 1px solid #DCDFE6;
     width: 350px;
@@ -137,4 +131,10 @@ export default {
       color: #39f;
       width: 200px;
     }
+  .box-title {
+    text-align: center;
+    margin: 0 auto 40px auto;
+    padding: 0px 0px 0px 10px;
+    color: #303133;
+  }
 </style>

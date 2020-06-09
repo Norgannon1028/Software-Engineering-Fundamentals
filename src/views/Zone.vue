@@ -53,7 +53,6 @@
         v-for="item in hisblogs.data"
         :key="item.id"
       >
-      <br/>
       <div class="box" @click="tothisblog(item.id)">
         <div class="list_con">
           <div class="title">
@@ -317,7 +316,10 @@ export default {
   }
   .box { 
     border: 1px solid #DCDFE6;
-    margin: 0px auto;
+    margin: 5px ;
+    margin-left: 10px;
+    margin-bottom: 10px;
+    width: 800px;
     padding: 10px 35px 15px 35px;
     border-radius: 5px;
     -webkit-border-radius: 5px;
@@ -337,14 +339,9 @@ export default {
     height: 600px;
   }
   .main{ 
-    border: 1px solid #DCDFE6;
-    margin: 10px auto;
+    margin: 5px auto;
     margin-left: 30px;
-    padding: 0px 35px 15px 15px;
-    border-radius: 5px;
-    -webkit-border-radius: 5px;
-    -moz-border-radius: 5px;
-    box-shadow: 0 0 5px #909399;
+    padding: 0px 0px 0px 0px;
     opacity: 1
   }
   .title{

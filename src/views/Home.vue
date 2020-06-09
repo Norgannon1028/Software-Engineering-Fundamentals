@@ -43,7 +43,6 @@
         v-for="item in recommendret.data"
         :key="item.id"
       >
-      <br/>
       <div class="box" @click="tothisblog(item.id)">
         <p @click="tothisblog(item.id)">文章标题：{{ item.title }}</p>
         <p>关键词：{{ item.keyword }}</p>
@@ -65,9 +64,6 @@
         <el-dropdown-menu slot="dropdown">
           <el-dropdown-item command="最热门">最热门</el-dropdown-item>
           <el-dropdown-item command="最新">最新</el-dropdown-item>
-            <!-- <el-dropdown-item>螺蛳粉</el-dropdown-item>
-            <el-dropdown-item disabled>双皮奶</el-dropdown-item>
-            <el-dropdown-item divided>蚵仔煎</el-dropdown-item> -->
         </el-dropdown-menu>
       </el-dropdown>
       <br />
@@ -86,35 +82,6 @@
         </div>
       </div>
     </div>
-    <!-- <div id="list">
-      <div
-        class="each"
-        v-show="showList"
-        v-for="(item, index) in items"
-        :key="index"
-        @click="toResult(item.id)"
-      >
-        
-      </div>
-    </div> -->
-    <!-- <div style="margin-top: 15px;">
-      <el-tag v-show="showList" @click="addItem">添加元素</el-tag>
-      <br />
-      <br />
-      <el-tag v-show="showList" @click="deleteItem">删除元素</el-tag>
-    </div> -->
-    <!-- <div style="margin-top: 15px;">
-      <el-tag @click="toTest">跳转测试</el-tag>
-      <br />
-      <br />
-      <el-tag @click="toTest2">地址栏传值测试</el-tag>
-      <br />
-      <br />
-      <el-tag @click="toTest3">隐式传值测试</el-tag>
-      <br />
-      <br />
-      <el-tag @click="addItem">增加测试</el-tag>
-    </div> -->
   </div>
 </template>
 
@@ -259,7 +226,7 @@ export default {
   }
   .box { 
     border: 1px solid #DCDFE6;
-    margin: 0px auto;
+    margin: 10px auto;
     padding: 10px 35px 15px 35px;
     border-radius: 5px;
     -webkit-border-radius: 5px;

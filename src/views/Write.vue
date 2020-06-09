@@ -19,8 +19,9 @@
         class="input-with-select"
       ></el-input>
       <br />
+      <br />
       <div id="md">
-	      <mavon-editor ref=md @imgAdd="$imgAdd" v-model="mdStr" @save="$save"></mavon-editor>
+	      <mavon-editor class="editor" ref=md @imgAdd="$imgAdd" v-model="mdStr" @save="$save"></mavon-editor>
 	    </div>
       <br />
       <el-button type="primary" @click="blog_post">
@@ -140,5 +141,8 @@ export default {
   border: 1px solid black;
   margin: 5px;
   cursor: pointer;
+}
+.editor{
+  height: 1000px;
 }
 </style>
