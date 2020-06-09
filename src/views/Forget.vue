@@ -142,12 +142,14 @@ export default {
     box-shadow: 0 0 25px #909399;
   }
 .submitBtn {
-      
+      display:block;
+      margin:0 auto;
       background-color: transparent;
       color: #39f;
       width: 200px;
     }
 .button{
-  margin: 0px 0px;
+  display:block;
+  margin:0 auto;
 }
 </style>

@@ -1,17 +1,28 @@
 <template>
-  <div class="blog">
+  
+  <div class="main">
     <Navigator return="blog" />
-    
     <div class="item">
-      <p>文章标题：{{blog_title}} 关键词：{{ blog_keyword }}</p>
-      <p @click="tohisinfo(blog_author)">作者：{{ blog_author }}</p>
-      <el-avatar src="this.blog_authorface"></el-avatar>
-      <p>被赞数：{{ blog_like }}</p>
-
-      <el-button type="primary" @click="likethisbolg" v-if="likeflag==false && loginflag==true">点赞</el-button>
-      <el-button @click="dislikethisbolg" v-if="likeflag==true && loginflag==true">已点赞</el-button>
-
-      <p>发表时间：{{ blog_time }}</p>
+      <div id="artcle-info">
+        <h2 class="text-center"><strong>{{blog_title}}</strong></h2>
+        <div class="text-center timeAndView">
+						<span class="article-time">
+							<i class="el-icon-time"></i>
+							{{ blog_time }}
+						</span>
+						&nbsp;|&nbsp;
+						<span class="article-views">
+							<i class="el-icon-star-off"></i>
+							被赞数：{{ blog_like }}
+						</span>
+             <p @click="tohisinfo(blog_author)">{{ blog_author }}</p>
+            <el-avatar src="this.blog_authorface"></el-avatar>
+					</div>
+          <p class="abstract">
+						关键词：{{ blog_keyword }}
+					</p>
+      </div>
+      
       <mavon-editor
       class="md"
       :value="blog_md"
@@ -24,11 +35,14 @@
       ></mavon-editor>
       <br />
       <br />
-      <div class="item" v-for="item in showcomment.data" :key="item.id">
-        <p>评论内容：{{ item.content }}</p>
-        <p @click="tohisinfo(item.userid)">作者：{{ item.userid }}</p>
-        <el-avatar src="item.face"></el-avatar>
-        <p>发表时间：{{ item.time }}</p>
+      <div class="comment" v-for="item in showcomment.data" :key="item.id">
+        
+        <div class="user">
+          <el-avatar src="item.face"></el-avatar>
+          <div @click="tohisinfo(item.userid)">{{ item.userid }}</div>
+        </div>
+        <p>{{ item.content }}</p>
+        <p class="time">{{ item.time }}</p>
         <br />
       </div>
       <br />
@@ -41,7 +55,7 @@
         type="comment"
         placeholder="在此输入评论内容"
         v-model="comment"
-        style="width:60%"
+        style="width:60%;"
         class="input-with-select"
         v-if="writingcomment==true"
       ></el-input>
@@ -50,7 +64,6 @@
       <el-button type="primary" v-if="writingcomment==true" @click="finishcomment">确认</el-button>
       <el-button v-if="writingcomment==true" @click="stopwriting">取消</el-button>
     </div>
-    
   </div>
 </template>
 
@@ -138,6 +151,7 @@ export default {
       });
     },
     showallcomment(blogid) {
+      document.body.scrollTop = document.documentElement.scrollTop = 0;
       this.$router.push({
         name: "Comment",
         params: {
@@ -293,10 +307,49 @@ export default {
 </script>
 
 <style scoped>
-.each {
-  width: 30%;
-  border: 1px solid black;
-  margin: 5px;
-  cursor: pointer;
-}
+#artcle-info {
+    margin: 3px;
+		padding: 20px;
+    margin-bottom: 40px;
+    border: 1px solid #DCDFE6;
+	}
+	
+	#artcle-info .abstract {
+		color: #ffffff;
+		border-left: 3px solid #409EFF;
+		padding: 10px;
+		background-color: rgba(126, 129, 135, 0.3);
+	}
+	
+	#artcle-info .timeAndView {
+		padding: 20px;
+		line-height: 30px;
+		font-size: 16px;
+	}
+	
+	pre.has {
+		color: #ffffff;
+		background-color: rgba(0, 0, 0, 0.8);
+	}
+	
+	img.has {
+		width: 100%;
+	}
+	
+	#statement {
+		border-left: 3px solid #409EFF;
+		padding: 20px;
+		background-color: #EBEEF5;
+  }
+  .comment{
+    border: 1px solid #DCDFE6;
+    padding: 10px 40px 0px 40px;
+  }
+  .user{
+    display:flex;
+  }
+  .time{
+    display:flex;
+    flex-direction: row-reverse;
+  }
 </style>

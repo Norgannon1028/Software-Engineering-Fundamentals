@@ -171,7 +171,8 @@ export default {
     box-shadow: 0 0 25px #909399;
   }
 .button{
-  margin: 100px auto 10 auto;
+  display:block;
+  margin:0 auto;
 }
 .box-title {
     text-align: center;
@@ -180,6 +181,8 @@ export default {
     color: #303133;
   }
 .submitBtn {
+      display:block;
+      margin:0 auto;
       background-color: transparent;
       color: #39f;
       width: 200px;

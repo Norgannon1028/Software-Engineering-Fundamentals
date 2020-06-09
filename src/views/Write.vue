@@ -64,7 +64,7 @@ export default {
         })
         .then(function(response) {
           if(response.data.draft_flag){
-            that.title=response.data.draft.title;
+          that.title=response.data.draft.title;
           that.time=response.data.draft.time;
           that.mdStr=response.data.draft.link;
           that.keyword=response.data.draft.keyword;
@@ -86,6 +86,7 @@ export default {
         .post("http://localhost:5000/write", {
           userid: that.userid,
           md: that.mdStr,
+
           title: that.title,
           keyword: that.keyword
         })

@@ -414,7 +414,8 @@ export default {
 	
 	.art-abstract {
 		flex: 1;
-		color: #aaa;
+    color: #aaa;
+    margin-bottom: 20px;
 	}
 	
 	.art-more {
