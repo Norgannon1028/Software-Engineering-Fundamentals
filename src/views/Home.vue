@@ -282,7 +282,7 @@ export default {
 		padding-left: 10px;
 		color: #409EFF;
 	}
-	.name{
+  .name{
     margin-top:10px ;
     margin-left: 5px;
     cursor: pointer;

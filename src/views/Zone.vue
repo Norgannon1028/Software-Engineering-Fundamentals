@@ -27,10 +27,10 @@
       <span>年龄:{{age}}</span>
       <br/>
       <br/>
-      <span @click="tofans()">粉丝数:{{fansnum}}</span>
+      <span class="touch" @click="tofans()">粉丝数:{{fansnum}}</span>
       <br/>
       <br/>
-      <span @click="tofollows()">关注数:{{follownum}}</span>
+      <span class="touch" @click="tofollows()">关注数:{{follownum}}</span>
       <br/>
       <br/>
       <el-button type="primary" @click="changeinfo()" v-if="changeflag == false && myinfoflag==true"
@@ -440,6 +440,13 @@ export default {
     cursor: pointer;
   }
   .name:hover{
+    padding-left: 10px;
+		color: #409EFF;
+  }
+  .touch{
+    cursor: pointer;
+  }
+  .touch:hover{
     padding-left: 10px;
 		color: #409EFF;
   }
