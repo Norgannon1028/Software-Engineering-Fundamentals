@@ -1,15 +1,17 @@
 <template>
   <div class="write">
     <Navigator return="write" />
-    <div style="margin-top: 15px;">
+    <el-form class="form" style="margin-top: 15px" >
+      <el-form-item>
       标题:<el-input
         placeholder="title"
         v-model="title"
         style="width:60%"
         class="input-with-select"
       ></el-input>
-      <br />
-      <br />
+      <br/>
+      </el-form-item>
+      <el-form-item>
       关键词:
       <el-input
         type="keyword"
@@ -18,8 +20,7 @@
         style="width:60%"
         class="input-with-select"
       ></el-input>
-      <br />
-      <br />
+      </el-form-item>
       <div id="md">
 	      <mavon-editor class="editor" ref=md @imgAdd="$imgAdd" v-model="mdStr" @save="$save"></mavon-editor>
 	    </div>
@@ -27,7 +28,7 @@
       <el-button type="primary" @click="blog_post">
         发表
       </el-button>
-    </div>
+    </el-form>
   </div>
 </template>
 
@@ -144,5 +145,8 @@ export default {
 }
 .editor{
   height: 1000px;
+}
+.form{
+  
 }
 </style>

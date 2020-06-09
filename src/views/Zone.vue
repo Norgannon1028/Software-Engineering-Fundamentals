@@ -12,29 +12,27 @@
     <el-aside class="aside">
       <span> 用户名: </span>
       <span> {{uname}} </span>
-      <br />
-      <br />
+      <br/>
+      <el-avatar src="this.face"></el-avatar>
+      <br/>
       <span>邮箱:</span>
       <span> {{email}} </span>
-      <br />
-      <br />
-
-      <el-avatar src="this.face"></el-avatar>
-      <br />
-      <br />
+      
+      <br/>
+      <br/>
       <span v-if="this.sex==1">性别:男</span>
       <span v-if="this.sex==0">性别:女</span>
-      <br />
-      <br />
+      <br/>
+      <br/>
       <span>年龄:{{age}}</span>
-      <br />
-      <br />
+      <br/>
+      <br/>
       <span @click="tofans()">粉丝数:{{fansnum}}</span>
-      <br />
-      <br />
+      <br/>
+      <br/>
       <span @click="tofollows()">关注数:{{follownum}}</span>
-      <br />
-      <br />
+      <br/>
+      <br/>
       <el-button type="primary" @click="changeinfo()" v-if="changeflag == false && myinfoflag==true"
         >修改
       </el-button>
@@ -47,35 +45,30 @@
       </el-button>
     </div>
     </el-aside>
+
     <el-main class="main">
     <div
         class="allhisblogs"
         v-for="item in hisblogs.data"
         :key="item.id"
-      >
+      > 
       <div class="box" @click="tothisblog(item.id)">
         <div class="list_con">
-          <div class="title">
-            <h2> 
-              <a @click="tothisblog(item.id)">
-                文章标题：{{ item.title }}
-              </a>
-            </h2>
-          </div>
-        <div class="key-word">关键词：{{ item.keyword }}</div>
-        <dl class="userbar"> 
-          <dt>
+          <h5 @click="tothisblog(item.id)" tag="span" class="art-title">{{ item.title}}&nbsp; </h5>
+        <div class="art-abstract">关键词：{{ item.keyword }}</div>
+        <div style="display:flex"> 
             <el-avatar class="user-img" src="item.face"></el-avatar>
-          </dt>
-          <dd class="name" @click="tohisinfo(item.userid)">作者：{{ item.userid }} </dd>
-        </dl>
-        
-        
-        <p>被赞数：{{ item.like }}</p>
-        <p>发表时间：{{ item.time }}</p>
+          <br>
+          <div class="name" @click="tohisinfo(item.userid)">作者：{{ item.userid }} </div>
+        </div>
+        <div class="art-more">
+          <div class="art-time"><i class="el-icon-time"></i>发表时间：{{ item.time }}</div>
+          <div class="view"><i class="el-icon-star-on"></i>被赞数：{{ item.like }}</div>
+        </div>
         </div>
       </div>
     </div>
+
   </el-main>
    </el-container>
   </div>
@@ -353,5 +346,95 @@ export default {
     overflow: hidden;
     white-space: nowrap;
     text-decoration: none!important;
+  }
+  #side .item {
+		margin-bottom: 30px;
+	}
+	
+	.art-item {
+		margin-bottom: 30px;
+		position: relative;
+	}
+	
+	.art-item .star {
+		width: 60px;
+		height: 60px;
+		position: absolute;
+		top: 0;
+		right: 0;
+	}
+	
+	img.tag {
+		width: 16px;
+		height: 16px;
+	}
+	
+	.art-title {
+		border-left: 3px solid #409EFF;
+		padding-left: 5px;
+		cursor: pointer;
+	}
+	
+	.art-title:hover {
+		padding-left: 10px;
+		color: #409EFF;
+	}
+	
+	.art-time {
+		margin-right: 20px;
+	}
+	
+	.art-body {
+		display: flex;
+		padding: 10px 0;
+	}
+	
+	.side-img {
+		height: 150px;
+		width: 270px;
+		overflow: hidden;
+		margin-right: 10px;
+	}
+	
+	img.art-banner {
+		width: 100%;
+		height: 100%;
+		transition: all 0.6s;
+	}
+	
+	img.art-banner:hover {
+		transform: scale(1.4);
+	}
+	
+	.side-abstract {
+		flex: 1;
+		display: flex;
+		flex-direction: column;
+	}
+	
+	.art-abstract {
+		flex: 1;
+		color: #aaa;
+	}
+	
+	.art-more {
+		height: 40px;
+		display: flex;
+		justify-content: flex-end;
+		align-items: flex-end;
+	}
+	
+	.art-more .view {
+		color: #aaa;
+	}
+	h5{
+		font-size: 18px;
+	}
+	.pagination {
+		background-color: #F9F9F9;
+  }
+  .name{
+    margin-top:10px ;
+    margin-left: 5px;
   }
 </style>

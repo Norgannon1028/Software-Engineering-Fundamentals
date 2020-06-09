@@ -44,12 +44,20 @@
         :key="item.id"
       >
       <div class="box" @click="tothisblog(item.id)">
-        <p @click="tothisblog(item.id)">文章标题：{{ item.title }}</p>
-        <p>关键词：{{ item.keyword }}</p>
-        <p @click="tohisinfo(item.userid)">作者：{{ item.userid }} </p>
-        <p>被赞数：{{ item.like }}</p>
-        <p>发表时间：{{ item.time }}</p>
+        <div class="list_con">
+          <h5 @click="tothisblog(item.id)" tag="span" class="art-title">{{ item.title}} </h5>
+        <div class="art-abstract">关键词：{{ item.keyword }}</div>
+        <div style="display:flex"> 
+            <el-avatar class="user-img" src="item.face"></el-avatar>
+            <br>
+            <div class="name" @click="tohisinfo(item.userid)">作者：{{ item.userid }} </div>
         </div>
+        <div class="art-more">
+          <div class="art-time"><i class="el-icon-time"></i>发表时间：{{ item.time }}</div>
+          <div class="view"><i class="el-icon-star-on"></i>被赞数：{{ item.like }}</div>
+        </div>
+      </div>
+      </div>
       </div>
     </div>
     <div v-if="searchflag==true">
@@ -74,12 +82,20 @@
       >
       <br/>
       <div class="box" @click="tothisblog(item.id)">
-        <p @click="tothisblog(item.id)">文章标题：{{ item.title }}</p>
-        <p>关键词：{{ item.keyword }}</p>
-        <p @click="tohisinfo(item.userid)">作者：{{ item.userid }} </p>
-        <p>被赞数：{{ item.like }}</p>
-        <p>发表时间：{{ item.time }}</p>
+        <div class="list_con">
+          <h5 @click="tothisblog(item.id)" tag="span" class="art-title">{{ item.title}} </h5>
+          <div class="art-abstract">关键词：{{ item.keyword }}</div>
+          <div style="display:flex"> 
+            <el-avatar class="user-img" src="item.face"></el-avatar>
+            <br>
+            <div class="name" @click="tohisinfo(item.userid)">作者：{{ item.userid }} </div>
+          </div>
+        <div class="art-more">
+          <div class="art-time"><i class="el-icon-time"></i>发表时间：{{ item.time }}</div>
+          <div class="view"><i class="el-icon-star-on"></i>被赞数：{{ item.like }}</div>
         </div>
+        </div>
+      </div>
       </div>
     </div>
   </div>
@@ -234,4 +250,37 @@ export default {
     box-shadow: 0 0 5px #909399;
     opacity: 1
   }
+  .art-more {
+		height: 40px;
+		display: flex;
+		justify-content: flex-end;
+		align-items: flex-end;
+	}
+  .art-more .view {
+		color: #aaa;
+	}
+	h5{
+		font-size: 18px;
+	}
+	.pagination {
+		background-color: #F9F9F9;
+  }
+  .name{
+    margin-top:10px ;
+    margin-left: 5px;
+  }
+  .art-time {
+		margin-right: 20px;
+  }
+  .art-title {
+		border-left: 3px solid #409EFF;
+		padding-left: 5px;
+		cursor: pointer;
+	}
+	
+	.art-title:hover {
+		padding-left: 10px;
+		color: #409EFF;
+	}
+	
 </style>
