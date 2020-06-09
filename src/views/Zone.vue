@@ -9,7 +9,7 @@
       <br />
     </div>
     <el-container>
-    <el-aside style="margin-top: 15px;" class="aside">
+    <el-aside class="aside">
       <span> 用户名: </span>
       <span> {{uname}} </span>
       <br />
@@ -54,13 +54,27 @@
         :key="item.id"
       >
       <br/>
-      <div class="box">
-        <p @click="tothisblog(item.id)">文章标题：{{ item.title }}</p>
-        <p>关键词：{{ item.keyword }}</p>
-        <p @click="tohisinfo(item.userid)">作者：{{ item.userid }} </p>
-        <el-avatar src="item.face"></el-avatar>
+      <div class="box" @click="tothisblog(item.id)">
+        <div class="list_con">
+          <div class="title">
+            <h2> 
+              <a @click="tothisblog(item.id)">
+                文章标题：{{ item.title }}
+              </a>
+            </h2>
+          </div>
+        <div class="key-word">关键词：{{ item.keyword }}</div>
+        <dl class="userbar"> 
+          <dt>
+            <el-avatar class="user-img" src="item.face"></el-avatar>
+          </dt>
+          <dd class="name" @click="tohisinfo(item.userid)">作者：{{ item.userid }} </dd>
+        </dl>
+        
+        
         <p>被赞数：{{ item.like }}</p>
         <p>发表时间：{{ item.time }}</p>
+        </div>
       </div>
     </div>
   </el-main>
@@ -313,7 +327,7 @@ export default {
   }
   .aside { 
     border: 1px solid #DCDFE6;
-    margin: 0px auto;
+    margin: 10px auto;
     padding: 10px 35px 15px 35px;
     border-radius: 5px;
     -webkit-border-radius: 5px;
@@ -324,7 +338,7 @@ export default {
   }
   .main{ 
     border: 1px solid #DCDFE6;
-    margin: 0px auto;
+    margin: 10px auto;
     margin-left: 30px;
     padding: 0px 35px 15px 15px;
     border-radius: 5px;
@@ -332,5 +346,15 @@ export default {
     -moz-border-radius: 5px;
     box-shadow: 0 0 5px #909399;
     opacity: 1
+  }
+  .title{
+    font-size: 18px;
+    font-weight: bold;
+    line-height: 24px;
+    height: 50px;
+    margin-bottom: 4px;
+    overflow: hidden;
+    white-space: nowrap;
+    text-decoration: none!important;
   }
 </style>

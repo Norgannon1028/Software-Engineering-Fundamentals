@@ -2,12 +2,11 @@
   <div id="navigator">
     <el-menu
       :default-active="activeIndex"
-      class="el-menu-demo"
+      
       mode="horizontal"
-      background-color="#545c64"
-      text-color="#fff"
       active-text-color="#ffd04b"
     >
+    <!-- background-color="#545c64" -->
       <el-menu-item index="home" @click="toHome" >
         首页
       </el-menu-item>
