@@ -2,7 +2,6 @@
   <div id="navigator">
     <el-menu
       :default-active="activeIndex"
-      
       mode="horizontal"
       active-text-color="#ffd04b"
     >
@@ -18,6 +17,9 @@
       </el-menu-item>
       <el-menu-item index="comment" v-if="activeIndex == 'comment'">
         全部评论
+      </el-menu-item>
+      <el-menu-item index="draft" @click="toDraft" v-if="loginflag">
+        我的草稿
       </el-menu-item>
       <el-menu-item style="float:right" index="dropout" @click="drop" v-if="loginflag"
         >注销</el-menu-item
@@ -64,6 +66,9 @@ export default {
   methods: {
     toHome() {
       this.$router.push({ path: "/home" });
+    },
+    toDraft() {
+      this.$router.push({ path: "/draft" });
     },
     toSignup() {
       this.$router.push({ path: "/signup" });

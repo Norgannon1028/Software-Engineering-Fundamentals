@@ -468,8 +468,13 @@ def writeblog():
         md=j_data.get("md")
         title=j_data.get("title")
         keyword=j_data.get("keyword")
+        draftid=j_data.get("draftid")
         blog=Blog(userid=userid,keyword=keyword,title=title,link=md,like=0,time=time.strftime("%Y-%m-%d",time.localtime(time.time())))
         db.session.add(blog)
+        draft=db.session.query(Draft).filter(Draft.id==draftid).first()
+        print(draftid)
+        if draft != None:
+            db.session.delete(draft)
         db.session.commit()
         message='发布成功!'
     response={'msg':message}
@@ -587,7 +592,7 @@ def getdraft():
             draft_flag=True
             message='读取草稿成功!'
             response={'msg':message,
-            'draft':draft.to_dict,
+            'draft':draft.to_dict(),
             'draft_flag':draft_flag}
         else:
             message='读取草稿失败!'
@@ -596,6 +601,28 @@ def getdraft():
             'draft_flag':draft_flag}
     print(response)
     return jsonify(response)
+
+#全部草稿
+@app.route('/getalldraft', methods=['GET','POST'])
+def getalldraft():
+    response={}
+    result = []
+    error = None
+    if request.method == 'POST':
+        i=1
+        j_data=request.json
+        userid=j_data.get("userid")
+        #print(db.session.query(Blog).join(User, User.id==Blog.userid))
+        drafts=db.session.query(Draft).filter(Draft.userid==userid).all()
+        for draft in drafts:
+            if draft == None:
+                continue
+            draft=draft.to_dict()
+            response['draft'+str(i)]=draft
+            i+=1
+    print(response)
+    return jsonify(response)
+
 #新建评论
 @app.route('/addcomment', methods=['GET','POST'])
 def addcomment():
@@ -708,6 +735,7 @@ def allfollows():
             follower=User.query.filter(User.id==followerid).first()
             follower=follower.to_dict()
             response['follower'+str(i)]=follower
+            i+=1
     print(response)
     return jsonify(response)
 
@@ -730,6 +758,7 @@ def allfans():
             fans=User.query.filter(User.id==fansid).first()
             fans=fans.to_dict()
             response['fans'+str(i)]=fans
+            i+=1
     print(response)
     return jsonify(response)
 

@@ -28,6 +28,9 @@
       <el-button type="primary" @click="blog_post">
         发表
       </el-button>
+      <el-button @click="$save">
+        保存
+      </el-button>
     </el-form>
   </div>
 </template>
@@ -86,9 +89,9 @@ export default {
         .post("http://localhost:5000/write", {
           userid: that.userid,
           md: that.mdStr,
-
           title: that.title,
-          keyword: that.keyword
+          keyword: that.keyword,
+          draftid: that.draft_id
         })
         .then(function(response) {
           alert(response.data.msg);

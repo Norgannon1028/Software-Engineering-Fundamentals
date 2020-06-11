@@ -12,6 +12,7 @@ import Comment from "../views/Comment.vue";
 import Follow from "../views/Follow.vue";
 import Follower from "../views/Follower.vue";
 import Info from "../views/Info.vue";
+import Draft from "../views/Draft.vue";
 Vue.use(VueRouter);
 const routes = [
   // 单纯的切换，redirect对应的是name
@@ -24,6 +25,11 @@ const routes = [
     path: "/home",
     name: "Home",
     component: Home
+  },
+  {
+    path: "/draft",
+    name: "Draft",
+    component: Draft
   },
   {
     path: "/comment",
