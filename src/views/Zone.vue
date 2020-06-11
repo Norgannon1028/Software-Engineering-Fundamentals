@@ -297,14 +297,14 @@ export default {
   .avatar-uploader-icon {
     font-size: 28px;
     color: #8c939d;
-    width: 178px;
-    height: 178px;
+    /* width: 178px;
+    height: 178px; */
     line-height: 178px;
     text-align: center;
   }
   .avatar {
-    width: 178px;
-    height: 178px;
+    /* width: 178px;
+    height: 178px; */
     display: block;
   }
   .box { 
@@ -312,7 +312,7 @@ export default {
     margin: 5px ;
     margin-left: 10px;
     margin-bottom: 10px;
-    width: 800px;
+    width: 70%;
     padding: 10px 35px 15px 35px;
     border-radius: 5px;
     -webkit-border-radius: 5px;

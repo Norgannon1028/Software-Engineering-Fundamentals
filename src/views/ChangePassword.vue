@@ -6,7 +6,7 @@
         :model="change_form"
         :rules="rules"
         ref="change_form"
-        label-width="100px"
+        label-width="30%"
         class="box"
       >
         <h3 class="box-title">修改密码</h3>
@@ -117,7 +117,7 @@ export default {
 <style scoped>
 .box {
     border: 1px solid #DCDFE6;
-    width: 350px;
+    width: 40%;
     margin: 180px auto;
     padding: 35px 35px 15px 35px;
     border-radius: 5px;
