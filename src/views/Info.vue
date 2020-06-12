@@ -1,15 +1,14 @@
 <template>
   <div class="info">
     <Navigator return="info" />
-    <div style="margin-top: 15px;">
-      <span> 用户名: </span>
-      <span> {{uname}} </span>
+    <div style="margin-top: 15px;" class="info-box" label-width="80px">
+      <h3 class="info-title"> 用户名:{{uname}} </h3>
       <br />
       <br />
-      <span>邮箱:</span>
-      <span> {{email}} </span>
+      <h4 class="info-title">邮箱:{{email}} </h4>
       <br />
       <br />
+      <div class="img-box"> 
       <el-upload
         class="avatar-uploader"
         action="http://localhost:5000/upload"
@@ -20,7 +19,8 @@
         <img v-if="image_url" :src="image_url" class="avatar">
       <i v-else class="el-icon-plus avatar-uploader-icon"></i>
       </el-upload>
-      <div>
+      </div>
+      <div class="radio">
         <template>
           <el-radio v-model="sex" label="1">男</el-radio>
           <el-radio v-model="sex" label="0">女</el-radio>
@@ -34,16 +34,17 @@
         label-width="100px"
         class="changeinfo"
       >
-        <el-form-item label="年龄" prop="age">
-          <el-input v-model="info_form.age" type="number"></el-input>
+        <el-form-item label="年龄" prop="age" style="margin-left:10px">
+          <el-input style="text-align: right;" v-model="info_form.age" type="number"></el-input>
         </el-form-item> 
       </el-form>
       <el-button
+        class="submitBtn"
         type="primary"
         @click="confirm()"
         >确认
       </el-button>
-      <el-button @click="tomyinfo()">取消</el-button>
+      <el-button style="margin-left:0px;margin-top:5px" @click="tomyinfo()">取消</el-button>
     </div>
   </div>
 </template>
@@ -204,18 +205,7 @@ export default {
 </script>
 
 <style scoped>
-.each {
-  width: 30%;
-  border: 1px solid black;
-  margin: 5px;
-  cursor: pointer;
-}
 .avatar-uploader .el-upload {
-    border: 1px dashed #d9d9d9;
-    border-radius: 6px;
-    cursor: pointer;
-    position: relative;
-    overflow: hidden;
   }
   .avatar-uploader .el-upload:hover {
     border-color: #409EFF;
@@ -226,11 +216,46 @@ export default {
     width: 178px;
     height: 178px;
     line-height: 178px;
-    text-align: center;
+    margin:0 auto;
   }
   .avatar {
     width: 178px;
     height: 178px;
-    display: block;
+  }
+  .info-box {
+    border: 1px solid #DCDFE6;
+    width: 60%;
+    margin: 180px auto;
+    text-align:center;
+    padding: 35px 35px 15px 0px;
+    border-radius: 5px;
+    -webkit-border-radius: 5px;
+    -moz-border-radius: 5px;
+    box-shadow: 0 0 25px #909399;
+  }
+  .img-box {
+    border: 1px solid #DCDFE6;
+    width: 178px;
+    margin: 10px auto;
+    padding: 0px 0px 0px 0px;
+    border-radius: 5px;
+    -webkit-border-radius: 5px;
+    -moz-border-radius: 5px;
+  }
+  .info-title {
+    text-align: center;
+    margin: 0 auto;
+    padding: 0px 0px 0px 10px;
+    color: #303133;
+  }
+  .submitBtn {
+      display:block;
+      margin: 0px auto;
+      background-color: transparent;
+      color: #39f;
+    }
+  .radio{
+    display:block;
+    margin: 0px auto;
   }
 </style>
