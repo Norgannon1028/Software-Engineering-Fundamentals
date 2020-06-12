@@ -52,7 +52,7 @@ export default {
         ],
         password: [
           { required: true, message: '请输入密码', trigger: 'blur' },
-          { min: 6, max: 15, message: '长度在 6 到 15 个字符', trigger: 'blur' }
+          { min: 5, max: 15, message: '长度在 5 到 15 个字符', trigger: 'blur' }
           ]
       },
     };
@@ -68,14 +68,10 @@ export default {
     },
     submitForm(formName) {
       this.$refs[formName].validate((valid) => {
-          if (valid) {
-            alert('submit!');
-            var that = this;
+      if (valid) {
+      var that = this;
       axios
-        .post("http://127.0.0.1:5000/signin", {
-          username: that.uname,
-          password: that.passwd
-        })
+        .post("http://127.0.0.1:5000/signin", that.login_form)
         .then(function(response) {
           alert(response.data.msg);
           if (response.data.msg == "登录成功!") {
@@ -102,7 +98,7 @@ export default {
           }
         })
         .catch(function(error) {
-          alert(error);
+          console.log(error);
         });
           } else {
             console.log('error submit!!');

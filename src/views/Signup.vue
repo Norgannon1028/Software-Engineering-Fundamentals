@@ -93,11 +93,11 @@ export default {
         ],
         passwd1: [
           { required: true, message: '请输入密码', trigger: 'blur' },
-          { min: 6, max: 15, message: '长度在 6 到 15 个字符', trigger: 'blur' }
+          { min: 5, max: 15, message: '长度在 5 到 15 个字符', trigger: 'blur' }
           ],
         passwd2: [
             { required: true, message: '请重复输入密码', trigger: 'blur' },
-            { min: 6, max: 15, message: '长度在 6 到 15 个字符', trigger: 'blur' },
+            { min: 5, max: 15, message: '长度在 5 到 15 个字符', trigger: 'blur' },
             { validator: checkpassword, trigger: 'blur' }
           ],
         email:[
@@ -121,19 +121,14 @@ export default {
              console.log('yes submit!!')
              var that = this;
       axios
-        .post("http://127.0.0.1:5000/regist", {
-          username: that.regist_form.uname,
-          password1: that.regist_form.passwd1,
-          password2: that.regist_form.passwd2,
-          email: that.regist_form.email
-        })
+        .post("http://127.0.0.1:5000/regist", that.regist_form)
         .then(function(response) {
           alert(response.data.msg);
           if (response.data.msg == "注册成功!")
             that.$router.push({ path: "/login" });
         })
         .catch(function(error) {
-          alert(error);
+          console.log(error);
         });
         } else {
           return false

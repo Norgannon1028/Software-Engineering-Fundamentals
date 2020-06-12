@@ -12,7 +12,7 @@
       <el-upload
         class="avatar-uploader"
         action="http://127.0.0.1:5000/uploadavatar"
-        :on-success="handleAvatarSuccess"
+        :http-request="customUpload"
         :show-file-list="false"
         :before-upload="beforeAvatarUpload">
         <img v-if="image_url" :src="image_url" class="avatar">
@@ -145,25 +145,28 @@ export default {
     },
     confirm() {
       var that = this;
-      axios
-        .post("http://127.0.0.1:5000/info", {
-          username: that.uname,
-          age: that.info_form.age,
-          sex: that.sex,
-          avatar:that.image_url
-        })
-        .then(function(res) {
-          alert("修改成功！");
-          that.$store.commit('setToken',JSON.stringify(res.data.token));
-          that.tomyinfo();
-        })
-        .catch(function(error) {
-          alert(error);
-        });
-    },
+        axios
+          .post("http://127.0.0.1:5000/info", {
+            username: that.uname,
+            age: that.info_form.age,
+            sex: that.sex,
+            avatar:that.image_url
+          })
+          .then(function(res) {
+            alert("修改成功！");
+            that.$store.commit('setToken',JSON.stringify(res.data.token));
+            that.tomyinfo();
+          })
+          .catch(function(error) {
+            alert(error);
+          });
+      },
     handleAvatarSuccess(response,file) {
-        this.image_url = URL.createObjectURL(file.raw);
-        this.image_url=response.data.image_url;
+       console.log("111")
+        //this.image_url=response.data.image_url;
+        //this.upload_url=response.data.image_url;
+        //console.log(this.upload_url); 
+        console.log(URL.createObjectURL(file.raw));
       },
       beforeAvatarUpload(file) {
         const isJPG = file.type === 'image/jpeg';
@@ -177,6 +180,30 @@ export default {
         }
         return isJPG && isLt2M;
       },
+      customUpload(fileobj){
+        const isJPG = fileobj.file.type === 'image/jpeg';
+        const isLt2M = fileobj.file.size / 1024 / 1024 < 2;
+
+        if (!isJPG) {
+          this.$message.error('上传头像图片只能是 JPG 格式!');return;
+        }
+        if (!isLt2M) {
+          this.$message.error('上传头像图片大小不能超过 2MB!');return;
+        }
+        let param=new FormData;
+        param.append('file',fileobj.file);
+        var that= this;
+        axios
+        .post("http://127.0.0.1:5000/uploadavatar", param)
+        .then(function(res) {
+          that.image_url=res.data.image_url;
+          console.log(res.data.image_url);
+        })
+        .catch(function(error) {
+          alert(error);
+        });
+    },
+      
   }
 };
 </script>

@@ -227,6 +227,8 @@ def login():
         j_data=request.json
         uname=j_data.get("username")
         p=j_data.get("password")
+        print(uname)
+        print(p)
         if valid_login(uname, p):
             message='登录成功!' 
             thispeople=User.query.filter(User.username==uname).first()
@@ -364,6 +366,7 @@ def info():
         age=j_data.get("age")
         sex=j_data.get("sex")
         avatar=j_data.get("avatar")
+        print(avatar)
         user = User.query.filter(User.username == uname).first()
         if user!=None:
             user.old=age
