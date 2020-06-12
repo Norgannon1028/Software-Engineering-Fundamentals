@@ -18,9 +18,8 @@
         class="input-with-select"
       ></el-input>
       </el-form-item>
-      <el-form-item >
         <el-button class="submitBtn" type="primary" @click="test_ajax">登录</el-button>
-        </el-form-item>
+        <br>
         <el-button style="display:block;margin:0 auto" v-if="showrepassword==true" @click="toRepassword">
           忘记密码？
         </el-button>
@@ -116,6 +115,7 @@ export default {
 
 .submitBtn {
       display:block;
+      text-align: center;
       margin: 0px auto;
       background-color: transparent;
       color: #39f;

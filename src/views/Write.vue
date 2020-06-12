@@ -1,23 +1,23 @@
 <template>
   <div class="write">
     <Navigator return="write" />
-    <el-form class="form" style="margin-top: 15px" >
-      <el-form-item>
-      标题:<el-input
+    <el-form class="form" style="margin-top: 15px" label-width="80px">
+      <el-form-item label="标题:">
+        <label slot="label">标题:</label>
+      <el-input
         placeholder="title"
         v-model="title"
-        style="width:60%"
+        style="width:60%;text-align: center;"
         class="input-with-select"
       ></el-input>
       <br/>
       </el-form-item>
-      <el-form-item>
-      关键词:
+      <el-form-item label="关键词:">
       <el-input
         type="keyword"
         placeholder="keyword"
         v-model="keyword"
-        style="width:60%"
+        style="width:60%;text-align: center;"
         class="input-with-select"
       ></el-input>
       </el-form-item>
@@ -152,5 +152,8 @@ export default {
 }
 .form{
   
+}
+.white-space {
+       white-space:pre
 }
 </style>

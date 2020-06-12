@@ -9,11 +9,13 @@
       <br />
     </div>
     <el-container>
-    <el-aside class="aside">
-      <span> 用户名: </span>
+    <el-aside class="aside" style="text-align: center;">
+      <br/>
+        <el-avatar src="this.face"></el-avatar>
+        <br>
+        <span style="margin:0px auto"> 用户名: </span>
       <span> {{uname}} </span>
       <br/>
-      <el-avatar src="this.face"></el-avatar>
       <br/>
       <span>邮箱:</span>
       <span> {{email}} </span>

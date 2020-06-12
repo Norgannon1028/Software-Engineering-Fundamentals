@@ -15,9 +15,12 @@
 							<i class="el-icon-star-off"></i>
 							被赞数：{{ blog_like }}
 						</span>
-             <p @click="tohisinfo(blog_author)">{{ blog_author }}</p>
-            <el-avatar src="this.blog_authorface"></el-avatar>
-					</div>
+            <span style="float:right;">
+              <el-avatar src="this.blog_authorface"></el-avatar>
+              <span class="touch" style="margin-left:10px;vertical-align:top;" @click="tohisinfo(blog_author)">{{ blog_author }}</span>
+            </span>
+            <br>
+          </div>
           <p class="abstract">
 						关键词：{{ blog_keyword }}
 					</p>
@@ -351,5 +354,12 @@ export default {
   .time{
     display:flex;
     flex-direction: row-reverse;
+  }
+  .touch{
+    cursor: pointer;
+  }
+  .touch:hover{
+    padding-left: 10px;
+		color: #409EFF;
   }
 </style>
