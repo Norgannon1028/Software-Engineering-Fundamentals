@@ -87,7 +87,7 @@ export default {
     repassword() {
       var that = this;
       axios
-        .post("http://localhost:5000/repassword", {
+        .post("http://127.0.0.1:5000/repassword", {
           username: that.rep_form.uname,
           email: that.rep_form.email
         })
@@ -104,7 +104,7 @@ export default {
       var that=this;
       that.code=Math.floor(Math.random() * (999999 - 100000) + 100000);
       axios
-        .post("http://localhost:5000/verification", {
+        .post("http://127.0.0.1:5000/verification", {
           email: that.rep_form.email,
           code:that.code
         })

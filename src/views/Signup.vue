@@ -117,7 +117,7 @@ export default {
     test_ajax() {
       var that = this;
       axios
-        .post("http://localhost:5000/regist", {
+        .post("http://127.0.0.1:5000/regist", {
           username: that.regist_form.uname,
           password1: that.regist_form.passwd1,
           password2: that.regist_form.passwd2,
@@ -136,7 +136,7 @@ export default {
       var that=this;
       that.code=Math.floor(Math.random() * (999999 - 100000) + 100000);
       axios
-        .post("http://localhost:5000/verification", {
+        .post("http://127.0.0.1:5000/verification", {
           email: that.regist_form.email,
           code:that.code
         })

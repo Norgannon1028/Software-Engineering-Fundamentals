@@ -11,9 +11,8 @@
       <div class="img-box"> 
       <el-upload
         class="avatar-uploader"
-        action="http://localhost:5000/upload"
+        action="http://127.0.0.1:5000/uploadavatar"
         :on-success="handleAvatarSuccess"
-        :http-request="customUpload"
         :show-file-list="false"
         :before-upload="beforeAvatarUpload">
         <img v-if="image_url" :src="image_url" class="avatar">
@@ -116,7 +115,7 @@ export default {
     gethisblogs() {
       var that = this;
       axios
-        .post("http://localhost:5000/allhisblog", {
+        .post("http://127.0.0.1:5000/allhisblog", {
           username: that.uname
         })
         .then(function(response) {
@@ -129,7 +128,7 @@ export default {
     getinfo(){
       var that = this;
       axios
-        .post("http://localhost:5000/getinfo", {
+        .post("http://127.0.0.1:5000/getinfo", {
           username: that.uname,
         })
         .then(function(response) {
@@ -139,10 +138,6 @@ export default {
           that.sex=String(response.data.sex);
           that.fansnum=response.data.fansnum;
           that.follownum=response.data.follownum;
-          //alert(response)
-          // if (response.data.name == "登录成功!") {
-          //   Navigator.data.loginflag = true;
-          // }
         })
         .catch(function(error) {
           alert(error);
@@ -151,13 +146,15 @@ export default {
     confirm() {
       var that = this;
       axios
-        .post("http://localhost:5000/info", {
+        .post("http://127.0.0.1:5000/info", {
           username: that.uname,
           age: that.info_form.age,
-          sex: that.sex
+          sex: that.sex,
+          avatar:that.image_url
         })
-        .then(function() {
+        .then(function(res) {
           alert("修改成功！");
+          that.$store.commit('setToken',JSON.stringify(res.data.token));
           that.tomyinfo();
         })
         .catch(function(error) {
@@ -165,9 +162,8 @@ export default {
         });
     },
     handleAvatarSuccess(response,file) {
-        alert(response.data.code);
-        this.image_url=require('../assets/'+response.image_url);
-        this.image_url= URL.createObjectURL(file.raw);
+        this.image_url = URL.createObjectURL(file.raw);
+        this.image_url=response.data.image_url;
       },
       beforeAvatarUpload(file) {
         const isJPG = file.type === 'image/jpeg';
@@ -180,25 +176,6 @@ export default {
           this.$message.error('上传头像图片大小不能超过 2MB!');
         }
         return isJPG && isLt2M;
-      },
-      customUpload(fileobj) {
-        let param = new FormData()
-        param.append('file',fileobj.file)
-        var that = this;
-        var  u='';
-       axios
-        .post("http://localhost:5000/upload",param).then(res=>{
-          if(res.data.code != 0) {
-            alert('文件上传失败, code:' + res.data.code)
-          } else {
-            //that.image_url=res.data.image_url;
-            that.image_url=res.data.image_url;
-          }
-        })
-        .catch(function(error) {
-          alert(error); 
-        }); 
-        that.image_url=require('../assets/'+u);
       },
   }
 };

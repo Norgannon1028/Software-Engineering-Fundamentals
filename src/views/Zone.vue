@@ -11,7 +11,7 @@
     <el-container>
     <el-aside class="aside" style="text-align: center;">
       <br/>
-        <el-avatar src="this.face"></el-avatar>
+        <el-avatar :src="this.face"></el-avatar>
         <br>
         <span style="margin:0px auto"> 用户名: </span>
       <span> {{uname}} </span>
@@ -59,7 +59,7 @@
           <h5 @click="tothisblog(item.id)" tag="span" class="art-title">{{ item.title}} </h5>
         <div class="art-abstract">关键词：{{ item.keyword }}</div>
         <div style="display:flex"> 
-            <el-avatar class="user-img" src="item.face"></el-avatar>
+            <el-avatar class="user-img" :src="item.face"></el-avatar>
             <br>
             <div class="name" @click="tohisinfo(item.userid)">作者：{{ item.userid }} </div>
         </div>

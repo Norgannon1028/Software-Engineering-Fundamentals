@@ -96,7 +96,7 @@ export default {
     change() {
       var that = this;
       axios
-        .post("http://localhost:5000/changepassword", {
+        .post("http://127.0.0.1:5000/changepassword", {
           username: that.change_form.uname,
           oldpassword: that.change_form.oldpassword,
           password: that.change_form.passwd1,

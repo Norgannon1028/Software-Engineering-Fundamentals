@@ -57,7 +57,7 @@ export default {
     test_ajax() {
       var that = this;
       axios
-        .post("http://localhost:5000/signin", {
+        .post("http://127.0.0.1:5000/signin", {
           username: that.uname,
           password: that.passwd
         })

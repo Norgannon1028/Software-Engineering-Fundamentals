@@ -4,7 +4,7 @@
     <div class="comment" v-for="item in allcomments.data" :key="item.id">
         
         <div class="user">
-          <el-avatar src="item.face"></el-avatar>
+          <el-avatar :src="item.face"></el-avatar>
           <div @click="tohisinfo(item.userid)">{{ item.userid }}</div>
         </div>
         <p>{{ item.content }}</p>

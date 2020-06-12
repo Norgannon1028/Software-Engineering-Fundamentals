@@ -67,7 +67,7 @@ const routes = [
     component: Signup
   },
   {
-    path: "/zone",
+    path: "/zone/:username",
     name: "Zone",
     component: Zone
   },

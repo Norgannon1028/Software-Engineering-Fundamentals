@@ -363,7 +363,13 @@ def info():
         uname=j_data.get("username")
         age=j_data.get("age")
         sex=j_data.get("sex")
-        tmp = User.query.filter(User.username == uname).update({"old":age,"sex":sex})
+        avatar=j_data.get("avatar")
+        user = User.query.filter(User.username == uname).first()
+        if user!=None:
+            user.old=age
+            user.sex=sex
+            user.avatar=avatar
+            response={"token":user.generate_auth_token(3600)}
         db.session.commit()
     return response
 
@@ -863,7 +869,7 @@ def getblog():
     return jsonify(response)
 
 #上传文件
-@app.route('/upload', methods=['GET','POST'])
+@app.route('/uploadavatar', methods=['GET','POST'])
 def up_photo():
     print(request.data)
     print(request.form)

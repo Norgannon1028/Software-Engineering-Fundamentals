@@ -86,7 +86,7 @@ export default {
     blog_post() {
       var that = this;
       axios
-        .post("http://localhost:5000/write", {
+        .post("http://127.0.0.1:5000/write", {
           userid: that.userid,
           md: that.mdStr,
           title: that.title,
@@ -111,7 +111,7 @@ export default {
            formdata.append('userid',that.userid);
            formdata.append('file', $file);
            axios
-          .post("http://localhost:5000/upload", formdata)
+          .post("http://127.0.0.1:5000/upload", formdata)
           .then(function(response) {
             that.$refs.md.$img2Url(pos,response.data.image_url);
           })
@@ -122,7 +122,7 @@ export default {
       $save(){
         var that = this;
         axios
-        .post("http://localhost:5000/savedraft", {
+        .post("http://127.0.0.1:5000/savedraft", {
           userid: that.userid,
           md: that.mdStr,
           title: that.title,

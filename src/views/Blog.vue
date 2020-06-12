@@ -16,7 +16,7 @@
 							被赞数：{{ blog_like }}
 						</span>
             <span style="float:right;">
-              <el-avatar src="this.blog_authorface"></el-avatar>
+              <el-avatar :src="this.blog_authorface"></el-avatar>
               <span class="touch" style="margin-left:10px;vertical-align:top;" @click="tohisinfo(blog_author)">{{ blog_author }}</span>
             </span>
             <br>
@@ -41,7 +41,7 @@
       <div class="comment" v-for="item in showcomment.data" :key="item.id">
         
         <div class="user">
-          <el-avatar src="item.face"></el-avatar>
+          <el-avatar :src="item.face"></el-avatar>
           <div @click="tohisinfo(item.userid)">{{ item.userid }}</div>
         </div>
         <p>{{ item.content }}</p>

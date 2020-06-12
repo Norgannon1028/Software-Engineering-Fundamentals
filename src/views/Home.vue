@@ -48,7 +48,7 @@
           <h5 @click="tothisblog(item.id)" tag="span" class="art-title">{{ item.title}} </h5>
         <div class="art-abstract">关键词：{{ item.keyword }}</div>
         <div style="display:flex"> 
-            <el-avatar class="user-img" src="item.face"></el-avatar>
+            <el-avatar class="user-img" :src="item.face"></el-avatar>
             <br>
             <div class="name" @click="tohisinfo(item.userid)">作者：{{ item.userid }} </div>
         </div>
@@ -86,7 +86,7 @@
           <h5 @click="tothisblog(item.id)" tag="span" class="art-title">{{ item.title}} </h5>
           <div class="art-abstract">关键词：{{ item.keyword }}</div>
           <div style="display:flex"> 
-            <el-avatar class="user-img" src="item.face"></el-avatar>
+            <el-avatar class="user-img" :src="item.face"></el-avatar>
             <br>
             <div class="name" @click="tohisinfo(item.userid)">作者：{{ item.userid }} </div>
           </div>
