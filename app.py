@@ -252,7 +252,7 @@ def regist():
        # print(em,uname)
         if valid_regist(uname, p1, p2, em):
             today = datetime.date.today()
-            user=User(username=uname, password=p1, email=em, sex="1", old="18", time=today)
+            user=User(username=uname, password=p1, email=em, sex="1", old="18", time=today,avatar="http://127.0.0.1:5000/static/default_avatar.jpg")
             db.session.add(user)
             db.session.commit()
             message='注册成功!'

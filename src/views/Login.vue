@@ -1,12 +1,12 @@
 <template>
   <div class="login">
     <Navigator return="login" />
-      <el-form ref="loginForm" :model="form" :rules="rules" label-width="80px" class="login-box">
-      <h3 class="login-title">要登陆了咕咕</h3>
+      <el-form ref="login_form" :model="login_form" :rules="rules" label-width="80px" class="login-box">
+      <h3 class="login-title">要登录了</h3>
       <el-form-item label="账号" prop="username">  
       <el-input
         placeholder="username"
-        v-model="uname"
+        v-model="login_form.username"
         class="input-with-select"
       ></el-input>
       </el-form-item>
@@ -14,11 +14,11 @@
       <el-input
         type="password"
         placeholder="password"
-        v-model="passwd"
+        v-model="login_form.password"
         class="input-with-select"
       ></el-input>
       </el-form-item>
-        <el-button class="submitBtn" type="primary" @click="test_ajax">登录</el-button>
+        <el-button class="submitBtn" type="primary" @click="submitForm('login_form')">登录</el-button>
         <br>
         <el-button style="display:block;margin:0 auto" v-if="showrepassword==true" @click="toRepassword">
           忘记密码？
@@ -40,9 +40,21 @@ export default {
   },
   data() {
     return {
-      uname: "",
-      passwd: "",
-      showrepassword: false
+      login_form:{
+        username: "",
+        password: ""
+      },
+      showrepassword: false,
+      rules:{
+        username:[
+          { required: true, message: '请输入用户名', trigger: 'blur' },
+          { min: 3, max: 12, message: '长度在 3 到 12 个字符', trigger: 'blur' }
+        ],
+        password: [
+          { required: true, message: '请输入密码', trigger: 'blur' },
+          { min: 6, max: 15, message: '长度在 6 到 15 个字符', trigger: 'blur' }
+          ]
+      },
     };
   },
   created()
@@ -54,8 +66,11 @@ export default {
     toRepassword(){
       this.$router.push({ path: "/Forget" });
     },
-    test_ajax() {
-      var that = this;
+    submitForm(formName) {
+      this.$refs[formName].validate((valid) => {
+          if (valid) {
+            alert('submit!');
+            var that = this;
       axios
         .post("http://127.0.0.1:5000/signin", {
           username: that.uname,
@@ -89,6 +104,12 @@ export default {
         .catch(function(error) {
           alert(error);
         });
+          } else {
+            console.log('error submit!!');
+            return false;
+          }
+        });
+      
     }
   }
 };

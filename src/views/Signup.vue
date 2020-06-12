@@ -30,12 +30,13 @@
           <el-input v-model="regist_form.code"></el-input>
         </el-form-item>
         <el-form-item>
-          <el-button class="submitBtn" type="primary" @click="test_ajax()">注册</el-button>
+          <el-button class="submitBtn" type="primary" @click="submitForm('regist_form')">注册</el-button>
         </el-form-item>
         <el-form-item>
           <el-button class="button" @click="resetForm('regist_form')">重置</el-button>
         </el-form-item>
       </el-form>
+      
     </div>
   </div>
 
@@ -114,8 +115,11 @@ export default {
     };
   },
   methods: {
-    test_ajax() {
-      var that = this;
+    submitForm(formName) {
+      this.$refs[formName].validate(valid => {
+        if (valid) {
+             console.log('yes submit!!')
+             var that = this;
       axios
         .post("http://127.0.0.1:5000/regist", {
           username: that.regist_form.uname,
@@ -131,6 +135,11 @@ export default {
         .catch(function(error) {
           alert(error);
         });
+        } else {
+          return false
+        }
+    })
+      
     },
     verify(){
       var that=this;
