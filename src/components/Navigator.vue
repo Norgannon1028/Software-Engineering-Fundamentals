@@ -30,6 +30,9 @@
       <el-menu-item style="float:right" index="zone" @click="toZone" v-if="loginflag"
         >用户空间</el-menu-item
       >
+      <el-menu-item style="float:right" index="file" @click="toFile" v-if="loginflag"
+        >资源管理</el-menu-item
+      >
       <el-menu-item style="float:right" index="info" v-if="activeIndex=='info'"
         >信息修改</el-menu-item
       >
@@ -89,6 +92,9 @@ export default {
     },
     toChangepwd() {
       this.$router.push({ path: "/changepassword" });
+    },
+    toFile() {
+      this.$router.push({ name: "File" });
     },
     drop(){
       global.username="";

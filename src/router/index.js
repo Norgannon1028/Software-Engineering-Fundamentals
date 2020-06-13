@@ -13,6 +13,7 @@ import Follow from "../views/Follow.vue";
 import Follower from "../views/Follower.vue";
 import Info from "../views/Info.vue";
 import Draft from "../views/Draft.vue";
+import File from "../views/File.vue";
 Vue.use(VueRouter);
 const routes = [
   // 单纯的切换，redirect对应的是name
@@ -85,6 +86,11 @@ const routes = [
     path: "/info",
     name: "Info",
     component: Info
+  },
+  {
+    path: "/file",
+    name: "File",
+    component: File
   }
 ];
 

@@ -7,7 +7,8 @@ CREATE table User(
     email VARCHAR(30) not null,
     sex int check(sex=0 or sex=1),
     old int check(old>0 and old<150),
-    time text not null
+    time text not null,
+    avatar TEXT not null default 'http://127.0.0.1:5000/static/default_avatar.jpg'
 )
 go
 
@@ -25,6 +26,7 @@ go
 CREATE table File(
     id INTEGER primary key AUTOINCREMENT,
     userid  INTEGER not null REFERENCES User(id),
+    filename TEXT not null,
     link VARCHAR(255) not null
 )
 go

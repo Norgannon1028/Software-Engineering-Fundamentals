@@ -92,7 +92,8 @@ class Blog(db.Model):
 class File(db.Model):
     __tablename__='File'
     id = db.Column(db.Integer, primary_key=True)
-    userid = db.Column(db.Integer)
+    userid = db.Column(db.Integer),
+    filename=db.Column(db.TEXT)
     link = db.Column(db.String(80), unique=True)
 
     def __repr__(self):
@@ -871,7 +872,7 @@ def getblog():
     print(response)
     return jsonify(response)
 
-#上传文件
+#上传头像
 @app.route('/uploadavatar', methods=['GET','POST'])
 def up_photo():
     print(request.data)
@@ -889,5 +890,22 @@ def up_photo():
     print(response)
     return jsonify(response)
     
+#上传文件
+@app.route('/uploadfile', methods=['GET','POST'])
+def up_file():
+    print(request.data)
+    print(request.form)
+    print(request.files)
+    file = request.files.get('file')
+    path = "./src/assets/static/"
+    file_path = path+file.filename
+    file.save(file_path)
+    print('上传文件成功，上传的用户是：')
+    response={
+         'file_url':'http://127.0.0.1:5000/static/'+file.filename,
+         'code':0
+    } 
+    print(response)
+    return jsonify(response)
 if __name__ == '__main__':
     app.run(debug = True)
