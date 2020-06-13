@@ -2,14 +2,12 @@
   <div>
     <Navigator return="comment" />
     <div class="comment" v-for="item in allcomments.data" :key="item.id">
-        
         <div class="user">
           <el-avatar :src="item.face"></el-avatar>
-          <div @click="tohisinfo(item.userid)">{{ item.userid }}</div>
+          <span class="name" @click="tohisinfo(item.userid)">{{ item.userid }}</span>
         </div>
         <p>{{ item.content }}</p>
         <p class="time">{{ item.time }}</p>
-        <br />
       </div>
       <el-button style="float:left;margin:10px" @click="backtothisblog(blog_id)">返回</el-button>
   </div>
@@ -49,7 +47,7 @@ export default {
   methods: {
     tohisinfo(hisname) {
       this.$router.push({
-        name: "Info",
+        name: "Zone",
         params: {
           username: hisname
         }
@@ -94,5 +92,22 @@ export default {
     border: 1px solid #DCDFE6;
     padding: 10px 40px 0px 40px;
     margin-top: 5px;
+}
+.name{
+    margin-top:10px ;
+    margin-left: 5px;
+    cursor: pointer;
   }
+  .name:hover{
+    padding-left: 10px;
+		color: #409EFF;
+  }
+  .time {
+		display: flex;
+		justify-content: flex-end;
+		align-items: flex-end;
+	}
+  .time .view {
+		color: #aaa;
+	}
 </style>
