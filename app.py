@@ -692,6 +692,7 @@ def allcomments():
                 continue 
             comment=comment.to_dict()
             comment['userid']=tmp.username
+            comment['face']=tmp.avatar
             #print(blog)
             response['comment'+str(i)]=comment
             i+=1
