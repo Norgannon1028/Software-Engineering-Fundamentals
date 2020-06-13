@@ -42,7 +42,7 @@
         
         <div class="user">
           <el-avatar :src="item.face"></el-avatar>
-          <div @click="tohisinfo(item.userid)">{{ item.userid }}</div>
+          <div class="touch" @click="tohisinfo(item.userid)">{{ item.userid }}</div>
         </div>
         <p>{{ item.content }}</p>
         <p class="time">{{ item.time }}</p>
