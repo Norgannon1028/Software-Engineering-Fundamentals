@@ -101,9 +101,6 @@
         <el-dropdown-menu slot="dropdown">
           <el-dropdown-item command="模糊搜索">模糊搜索</el-dropdown-item>
           <el-dropdown-item command="精确搜索">精确搜索</el-dropdown-item>
-            <!-- <el-dropdown-item>螺蛳粉</el-dropdown-item>
-            <el-dropdown-item disabled>双皮奶</el-dropdown-item>
-            <el-dropdown-item divided>蚵仔煎</el-dropdown-item> -->
         </el-dropdown-menu>
       </el-dropdown>
       <br />

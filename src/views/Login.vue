@@ -87,7 +87,6 @@ export default {
             //this.forceUpdate();
             //this.$root.username = that.uname;
             //this.$root.loginflag = true;
-            
             that.$router.push({
               path: "/home"
             });

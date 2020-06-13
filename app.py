@@ -94,10 +94,11 @@ class Blog(db.Model):
 class File(db.Model):
     __tablename__='File'
     id = db.Column(db.Integer, primary_key=True)
-    userid = db.Column(db.Integer),
-    filename=db.Column(db.Text),
-    link = db.Column(db.String(80)),
+    userid = db.Column(db.Integer)
+    filename=db.Column(db.Text)
+    link = db.Column(db.String(80))
     time = db.Column(db.String(80))
+
     def to_json(self):
         return jsonify(self.to_dict)
     def to_dict(self):
@@ -106,7 +107,7 @@ class File(db.Model):
             del dict["_sa_instance_state"]
         return dict
     def __repr__(self):
-        return '<Info %r>' % self.username
+        return '<Info %r>' % self.userid
 
 class Follow(db.Model):
     __tablename__='Follow'
@@ -115,7 +116,7 @@ class Follow(db.Model):
     fromid = db.Column(db.Integer)
 
     def __repr__(self):
-        return '<Info %r>' % self.username
+        return '<Info %r>' % self.id
 
 class Comment(db.Model):
     __tablename__='Comment'
@@ -699,7 +700,10 @@ def allcomments():
             #result.append(blog.to_json())
     print(response)
     return jsonify(response)
-    
+
+  
+
+
 #添加点赞
 @app.route('/addlike', methods=['GET','POST'])
 def addlike():
@@ -923,7 +927,9 @@ def up_file():
     file_link='\'http://127.0.0.1:5000/static/'+file.filename+'\''
     file_name='\''+file.filename+'\''
     if id>0:
-        db.session.execute("insert into File(userid,filename,link,time) values(%s,\'%s\',%s,date('now'))"%(id,file.filename,file_link))
+        afile=File(userid=id, filename=file.filename, link=file_link, time=time.strftime("%Y-%m-%d",time.localtime(time.time())))
+        db.session.add(afile)
+        # db.session.execute("insert into File(userid,filename,link,time) values(%s,\'%s\',%s,date('now'))"%(id,file.filename,file_link))
         db.session.commit()
         response={
             'userid':id,
@@ -968,6 +974,30 @@ def getall_file():
             file=file.to_dict()
             response['file'+str(i)]=file
             i+=1
+    print(response)
+    return jsonify(response)
+
+
+#全部文件
+@app.route('/getallfiles', methods=['GET','POST'])
+def getallfiles():
+    response={}
+    result = []
+    error = None
+    if request.method == 'POST':
+        i=1
+        j_data=request.json
+        userid=j_data.get("userid")
+        #print(db.session.query(Blog).join(User, User.id==Blog.userid))
+        print(userid)
+        files=db.session.query(File).filter(File.userid==userid).all()
+        for file in files:
+            print(file.userid)
+            print(file.link)
+            file=file.to_dict()
+            response['file'+str(i)]=file
+            i+=1
+            print(file)
     print(response)
     return jsonify(response)
 

@@ -150,9 +150,6 @@ export default {
 .editor{
   height: 1000px;
 }
-.form{
-  
-}
 .white-space {
        white-space:pre
 }
