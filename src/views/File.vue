@@ -8,17 +8,20 @@
             drag
             action="http://127.0.0.1:5000/uploadfile"
             :file-list="fileList"
-            :http-request="customUpload"
+            :on-success="handleAvatarSuccess"
+            :before-upload="beforeAvatarUpload"
+            :on-remove="handleRemove"
+            :on-preview="handlePreview"
             :data="fileData"
             :auto-upload="true"
             multiple>
             <i class="el-icon-upload"></i>
             <div class="el-upload__text">将文件拖到此处，或<em>点击上传</em></div>
-            <div class="el-upload__tip" slot="tip">文件大小不能超过10M</div>
+            <div class="el-upload__tip" slot="tip">文件大小不能超过100M</div>
         </el-upload>
     </div>
     <div>
-        <el-button type="primary">下载<i class="el-icon-cloudy el-icon--right"></i></el-button>
+        <el-button type="primary" @click="test">下载<i class="el-icon-cloudy el-icon--right"></i></el-button>
     </div>
   </div>
 </template>
@@ -53,16 +56,42 @@ export default {
     
   },
   methods: {
+      test(){
+          var that = this;
+      axios
+        .post("http://127.0.0.1:5000/downloadfile", {
+          filename: '44f2ef1bgy1gdmldp3ljjg20dc0dcb2d.gif',
+          url:'http://127.0.0.1:5000/static/default_avatar.jpg'
+        },{responseType:'blob'})
+        .then(function(res) {
+            const conent = res.data
+          // console.log(conent);
+          const blob = new Blob([conent])
+          console.log(blob)
+            const link = document.createElement('a')
+            link.download = '44f2ef1bgy1gdmldp3ljjg20dc0dcb2d.gif'
+            link.style.display = 'none'
+            link.href = URL.createObjectURL(blob)
+             document.body.appendChild(link)
+            link.click() // 下载
+            URL.revokeObjectURL(link.href) // 释放url
+            document.body.removeChild(link)
+        })
+        .catch(function(error) {
+          alert(error);
+        });
+          
+      },
       handleAvatarSuccess(res, file) {
         console.log(res)
         this.handlePreview(file)
         this.$message('上传成功!');
       },
       beforeAvatarUpload(file) {
-        const isLt2M = file.size / 1024 / 1024 < 10;
+        const isLt2M = file.size / 1024 / 1024 < 100;
 
         if (!isLt2M) {
-          this.$message.error('上传文件大小不能超过 10MB!');
+          this.$message.error('上传文件大小不能超过 100MB!');
         }
         return  isLt2M;
       },
@@ -72,25 +101,6 @@ export default {
       handlePreview(file) {
         console.log(file);
       },
-      customUpload(fileobj){
-        const isLt2M = fileobj.file.size / 1024 / 1024 < 10;
-        if (!isLt2M) {
-          this.$message.error('上传文件大小不能超过 10MB!');return;
-        }
-        let param=new FormData;
-        param.append('file',fileobj.file);
-        param.append('userid',global.userid);
-        var that= this;
-        axios
-        .post("http://127.0.0.1:5000/uploadfile", param)
-        .then(function(res) {
-          that.image_url=res.data.image_url;
-          console.log(res.data.image_url);
-        })
-        .catch(function(error) {
-          alert(error);
-        });
-    },
   }
 };
 </script>

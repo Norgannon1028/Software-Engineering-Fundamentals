@@ -23,7 +23,7 @@
           <el-input v-model="rep_form.code"></el-input>
         </el-form-item>
         <el-form-item>
-          <el-button class="submitBtn" type="primary" @click="repassword()">重置密码</el-button>
+          <el-button class="submitBtn" type="primary" @click="submitForm('rep_form')">重置密码</el-button>
         </el-form-item>
       </el-form>
     </div>
@@ -84,8 +84,11 @@ export default {
     };
   },
   methods: {
-    repassword() {
-      var that = this;
+    submitForm(formName) {
+      this.$refs[formName].validate(valid => {
+        if (valid) {
+             console.log('yes submit!!')
+             var that = this;
       axios
         .post("http://127.0.0.1:5000/repassword", {
           username: that.rep_form.uname,
@@ -99,6 +102,10 @@ export default {
         .catch(function(error) {
           alert(error);
         });
+        }
+        else
+          return false;
+      })
     },
     verify(){
       var that=this;

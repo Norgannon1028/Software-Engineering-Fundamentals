@@ -23,7 +23,7 @@
           <el-input type="password" v-model="change_form.passwd2"></el-input>
         </el-form-item>
         <el-form-item>
-          <el-button class="submitBtn" type="primary" @click="change()">确认修改</el-button>
+          <el-button class="submitBtn" type="primary" @click="submitForm('change_form')">确认修改</el-button>
         </el-form-item>
       </el-form>
     </div>
@@ -74,15 +74,15 @@ export default {
         ],
         oldpassword: [
           { required: true, message: '请输入旧密码', trigger: 'blur' },
-          { min: 6, max: 15, message: '长度在 6 到 15 个字符', trigger: 'blur' }
+          { min: 5, max: 15, message: '长度在 5 到 15 个字符', trigger: 'blur' }
           ],
         passwd1: [
           { required: true, message: '请输入新密码', trigger: 'blur' },
-          { min: 6, max: 15, message: '长度在 6 到 15 个字符', trigger: 'blur' }
+          { min: 5, max: 15, message: '长度在 5 到 15 个字符', trigger: 'blur' }
           ],
         passwd2: [
             { required: true, message: '请重复输入新密码', trigger: 'blur' },
-            { min: 6, max: 15, message: '长度在 6 到 15 个字符', trigger: 'blur' },
+            { min: 5, max: 15, message: '长度在 5 到 15 个字符', trigger: 'blur' },
             { validator: checkpassword, trigger: 'blur' }
           ],
 
@@ -93,9 +93,12 @@ export default {
     };
   },
   methods: {
-    change() {
-      var that = this;
-      axios
+    submitForm(formName) {
+      this.$refs[formName].validate(valid => {
+        if (valid) {
+             console.log('yes submit!!')
+             var that = this;
+             axios
         .post("http://127.0.0.1:5000/changepassword", {
           username: that.change_form.uname,
           oldpassword: that.change_form.oldpassword,
@@ -109,7 +112,11 @@ export default {
         .catch(function(error) {
           alert(error);
         });
-    }
+        }
+        else
+          return false;
+      })
+    },
   }
 };
 </script>

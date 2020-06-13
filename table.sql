@@ -28,7 +28,7 @@ CREATE table File(
     userid  INTEGER not null REFERENCES User(id),
     filename Text not null,
     link VARCHAR(255) not null,
-    time text not null
+    time text not null 
 )
 go
 

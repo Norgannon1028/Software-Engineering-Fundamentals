@@ -185,13 +185,13 @@ export default {
       }
       else
       {
-        alert("请先登录")
+        this.$message('请先登录');
       }
     },
     finishcomment() {
       if(this.comment=="")
       {
-        alert("评论不能为空");
+        this.$message("评论不能为空");
       }
       else
       {

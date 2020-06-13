@@ -36,6 +36,22 @@
             <el-dropdown-item divided>蚵仔煎</el-dropdown-item> -->
         </el-dropdown-menu>
       </el-dropdown>
+      <div style="float:left;font-size:14px">
+        搜索方式：
+      </div>
+      <el-dropdown style="float:left" @command="searchkindCommand">
+        <span class="el-dropdown-link">
+          {{ searchkind }}<i class="el-icon-arrow-down el-icon--right"></i>
+        </span>
+
+        <el-dropdown-menu slot="dropdown">
+          <el-dropdown-item command="模糊搜索">模糊搜索</el-dropdown-item>
+          <el-dropdown-item command="精确搜索">精确搜索</el-dropdown-item>
+            <!-- <el-dropdown-item>螺蛳粉</el-dropdown-item>
+            <el-dropdown-item disabled>双皮奶</el-dropdown-item>
+            <el-dropdown-item divided>蚵仔煎</el-dropdown-item> -->
+        </el-dropdown-menu>
+      </el-dropdown>
       
       <br />
       <div
@@ -72,6 +88,22 @@
         <el-dropdown-menu slot="dropdown">
           <el-dropdown-item command="最热门">最热门</el-dropdown-item>
           <el-dropdown-item command="最新">最新</el-dropdown-item>
+        </el-dropdown-menu>
+      </el-dropdown>
+      <div style="float:left;font-size:14px">
+        搜索方式：
+      </div>
+      <el-dropdown style="float:left" @command="searchkindCommand">
+        <span class="el-dropdown-link">
+          {{ searchkind }}<i class="el-icon-arrow-down el-icon--right"></i>
+        </span>
+
+        <el-dropdown-menu slot="dropdown">
+          <el-dropdown-item command="模糊搜索">模糊搜索</el-dropdown-item>
+          <el-dropdown-item command="精确搜索">精确搜索</el-dropdown-item>
+            <!-- <el-dropdown-item>螺蛳粉</el-dropdown-item>
+            <el-dropdown-item disabled>双皮奶</el-dropdown-item>
+            <el-dropdown-item divided>蚵仔煎</el-dropdown-item> -->
         </el-dropdown-menu>
       </el-dropdown>
       <br />
@@ -124,7 +156,8 @@ export default {
       searchflag: false,
       // showList: false,
       recommendmethods: "最热门",
-      searchmethods: "最热门"
+      searchmethods: "最热门",
+      searchkind: "模糊搜索"
     };
   },
   created()
@@ -153,6 +186,9 @@ export default {
     recommendCommand(command) {
       this.recommendmethods=command;
       this.recommendblog(this.recommendmethods);
+    },
+    searchkindCommand(command) {
+      this.searchkind=command;
     },
     searchCommand(command) {
       this.searchmethods=command;
@@ -188,10 +224,12 @@ export default {
       axios
         .post("http://localhost:5000/searchblog", {
           searchkey: that.searchkey,
-          searchway: searchway
+          searchway: searchway,
+          searchkind: that.searchkind
         })
         .then(function(response) {
           that.searchret=response
+          //alert(that.searchret.data)
         })
         .catch(function(error) {
           alert(error);
@@ -204,7 +242,8 @@ export default {
       axios
         .post("http://localhost:5000/searchblog", {
           searchkey: that.searchkey,
-          searchway: searchway
+          searchway: searchway,
+          searchkind: that.searchkind
         })
         .then(function(response) {
           that.searchret=response

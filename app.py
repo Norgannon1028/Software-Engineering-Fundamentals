@@ -1,5 +1,5 @@
 from functools import wraps
-from flask import Flask, request, render_template, redirect, url_for, flash, session,jsonify,current_app
+from flask import Flask, request, render_template, redirect, url_for, flash, session,jsonify,current_app,make_response,send_file,send_from_directory
 from flask_cors import CORS
 from flask_sqlalchemy import SQLAlchemy
 from flask_mail import Mail,Message
@@ -11,6 +11,8 @@ from threading import Thread
 import random
 import string
 import base64
+import requests
+import mimetypes
 
 app = Flask(__name__,template_folder="src/views",static_folder='./src/assets/static')
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///Blog.db'
@@ -96,7 +98,13 @@ class File(db.Model):
     filename=db.Column(db.Text),
     link = db.Column(db.String(80)),
     time = db.Column(db.String(80))
-
+    def to_json(self):
+        return jsonify(self.to_dict)
+    def to_dict(self):
+        dict = self.__dict__
+        if "_sa_instance_state" in dict:
+            del dict["_sa_instance_state"]
+        return dict
     def __repr__(self):
         return '<Info %r>' % self.username
 
@@ -443,15 +451,22 @@ def searchblog():
     error = None
     blogs = None
     if request.method == 'POST':
-        i=1
+        i='1'
         j_data=request.json
         searchkey=j_data.get("searchkey")
         searchway=j_data.get("searchway")
+        searchkind=j_data.get("searchkind")
         #print(db.session.query(Blog).join(User, User.id==Blog.userid))
-        if searchway == '最新':
-            blogs=db.session.query(Blog).join(User, User.id==Blog.userid).filter(or_(Blog.title.like('%'+searchkey+'%'),User.username.like('%'+searchkey+'%'))).order_by(Blog.time.desc())
-        elif searchway == '最热门':
-            blogs=db.session.query(Blog).join(User, User.id==Blog.userid).filter(or_(Blog.title.like('%'+searchkey+'%'),User.username.like('%'+searchkey+'%'))).order_by(Blog.like.desc())
+        if searchkind == '模糊搜索':
+            if searchway == '最新':
+                blogs=db.session.query(Blog).join(User, User.id==Blog.userid).filter(or_(Blog.title.like('%'+searchkey+'%'),Blog.keyword.like('%'+searchkey+'%'),User.username.like('%'+searchkey+'%'))).order_by(Blog.time.desc())
+            elif searchway == '最热门':
+                blogs=db.session.query(Blog).join(User, User.id==Blog.userid).filter(or_(Blog.title.like('%'+searchkey+'%'),Blog.keyword.like('%'+searchkey+'%'),User.username.like('%'+searchkey+'%'))).order_by(Blog.like.desc())
+        if searchkind == '精确搜索':
+            if searchway == '最新':
+                blogs=db.session.query(Blog).join(User, User.id==Blog.userid).filter(or_(Blog.link.like('%'+searchkey+'%'),Blog.title.like('%'+searchkey+'%'),Blog.keyword.like('%'+searchkey+'%'),User.username.like('%'+searchkey+'%'))).order_by(Blog.time.desc())
+            elif searchway == '最热门':
+                blogs=db.session.query(Blog).join(User, User.id==Blog.userid).filter(or_(Blog.link.like('%'+searchkey+'%'),Blog.title.like('%'+searchkey+'%'),Blog.keyword.like('%'+searchkey+'%'),User.username.like('%'+searchkey+'%'))).order_by(Blog.like.desc())
         for blog in blogs:
             if blog == None:
                 continue
@@ -460,9 +475,9 @@ def searchblog():
             blog=blog.to_dict()
             blog['userid']=tmp.username
             blog['face']=tmp.avatar
-            #print(blog)
+            print(blog)
             response['blog'+str(i)]=blog
-            i+=1
+            i+='1'
             #result.append(blog.to_json())
     print(response)
     return jsonify(response)
@@ -904,10 +919,10 @@ def up_file():
     file_path = path+file.filename
     file.save(file_path)
     print('上传文件成功，上传的用户是：')
-    file_link='http://127.0.0.1:5000/static/'+file.filename
+    file_link='\'http://127.0.0.1:5000/static/'+file.filename+'\''
+    file_name='\''+file.filename+'\''
     if id>0:
-        f=File(userid=1,filename=file.filename,link=file_link,time=time.strftime("%Y-%m-%d",time.localtime(time.time()))) 
-        db.session.add(f)
+        db.session.execute("insert into File(userid,filename,link,time) values(%s,\'%s\',%s,date('now'))"%(id,file.filename,file_link))
         db.session.commit()
         response={
             'userid':id,
@@ -918,6 +933,40 @@ def up_file():
      response={
             'code':1
         }
+    print(response)
+    return jsonify(response)
+    
+#文件下载
+@app.route('/downloadfile', methods=['GET','POST'])
+def download_file():
+    response={}
+    try:
+        filename = request.json.get('filename')
+        url = request.json.get('url')
+        response = make_response(send_from_directory('./src/assets/static', filename, as_attachment=True))
+        response.headers["Content-Disposition"] = "attachment; filename={}".format(file_name.encode().decode('latin-1'))
+        return response
+    except Exception as err:
+        print('download_file error: {}'.format(str(err)))
+        return response
+
+#文件下载
+@app.route('/getallfile', methods=['GET','POST'])
+def getall_file():
+    response={}
+    result = []
+    error = None
+    if request.method == 'POST':
+        i=1
+        j_data=request.json
+        userid=j_data.get("userid")
+        files=db.session.query(File).filter(File.userid==userid).all()
+        for file in files:
+            if file == None:
+                continue
+            file=file.to_dict()
+            response['file'+str(i)]=file
+            i+=1
     print(response)
     return jsonify(response)
 

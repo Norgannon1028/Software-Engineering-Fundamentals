@@ -33,17 +33,17 @@ const routes = [
     component: Draft
   },
   {
-    path: "/comment",
+    path: "/comment/:id",
     name: "Comment",
     component: Comment
   },
   {
-    path: "/follow",
+    path: "/follow/:username",
     name: "Follow",
     component: Follow
   },
   {
-    path: "/follower",
+    path: "/follower/:username",
     name: "Follower",
     component: Follower
   },
