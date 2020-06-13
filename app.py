@@ -93,8 +93,9 @@ class File(db.Model):
     __tablename__='File'
     id = db.Column(db.Integer, primary_key=True)
     userid = db.Column(db.Integer),
-    filename=db.Column(db.TEXT)
-    link = db.Column(db.String(80), unique=True)
+    filename=db.Column(db.Text),
+    link = db.Column(db.String(80)),
+    time = db.Column(db.String(80))
 
     def __repr__(self):
         return '<Info %r>' % self.username
@@ -875,6 +876,9 @@ def getblog():
 #上传头像
 @app.route('/uploadavatar', methods=['GET','POST'])
 def up_photo():
+    if request.method != 'POST':
+        print("not post")
+        return
     print(request.data)
     print(request.form)
     print(request.files)
@@ -893,19 +897,29 @@ def up_photo():
 #上传文件
 @app.route('/uploadfile', methods=['GET','POST'])
 def up_file():
-    print(request.data)
-    print(request.form)
-    print(request.files)
     file = request.files.get('file')
+    id=int(request.form["userid"])
+    print(id)
     path = "./src/assets/static/"
     file_path = path+file.filename
     file.save(file_path)
     print('上传文件成功，上传的用户是：')
-    response={
-         'file_url':'http://127.0.0.1:5000/static/'+file.filename,
-         'code':0
-    } 
+    file_link='http://127.0.0.1:5000/static/'+file.filename
+    if id>0:
+        f=File(userid=1,filename=file.filename,link=file_link,time=time.strftime("%Y-%m-%d",time.localtime(time.time()))) 
+        db.session.add(f)
+        db.session.commit()
+        response={
+            'userid':id,
+            'file_url':'http://127.0.0.1:5000/static/'+file.filename,
+            'code':0
+        }
+    else:
+     response={
+            'code':1
+        }
     print(response)
     return jsonify(response)
+
 if __name__ == '__main__':
     app.run(debug = True)

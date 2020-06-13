@@ -26,8 +26,9 @@ go
 CREATE table File(
     id INTEGER primary key AUTOINCREMENT,
     userid  INTEGER not null REFERENCES User(id),
-    filename TEXT not null,
-    link VARCHAR(255) not null
+    filename Text not null,
+    link VARCHAR(255) not null,
+    time text not null
 )
 go
 
