@@ -19,6 +19,10 @@ axios.defaults.baseURL = "http://.";
 Vue.use(ElementUI);
 Vue.use(mavonEditor);
 
+router.beforeEach((to, from, next) => {
+  document.title='技术分享博客网站'
+  next();
+})
 new Vue({
   router,
   store:store,

@@ -105,8 +105,7 @@ export default {
           { type: 'email', message: '请输入正确的邮箱地址', trigger: ['blur', 'change'] }
         ],
         code:[
-          { required: true, message: '请输入验证码', trigger: 'blur' },
-          { validator: checkcode, trigger: 'change'  }
+          { required: true, message: '请输入验证码', trigger: 'blur' }
         ]
       },
       send_status:false,
@@ -118,10 +117,14 @@ export default {
     submitForm(formName) {
       this.$refs[formName].validate(valid => {
         if (valid) {
+          if(this.code!=parseInt(this.regist_form.code)){
+              this.$message.error('验证码错误');
+              return;
+          }
              console.log('yes submit!!')
              var that = this;
       axios
-        .post("http://127.0.0.1:5000/regist", that.regist_form)
+        .post("http://175.24.53.216:5000/regist", that.regist_form)
         .then(function(response) {
           alert(response.data.msg);
           if (response.data.msg == "注册成功!")
@@ -137,10 +140,14 @@ export default {
       
     },
     verify(){
+      if(this.send_status){
+        return;
+      }
       var that=this;
       that.code=Math.floor(Math.random() * (999999 - 100000) + 100000);
+      console.log(that.code)
       axios
-        .post("http://127.0.0.1:5000/verification", {
+        .post("http://175.24.53.216:5000/verification", {
           email: that.regist_form.email,
           code:that.code
         })

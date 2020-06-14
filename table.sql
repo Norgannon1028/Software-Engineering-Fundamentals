@@ -109,3 +109,5 @@ drop table olddraft
 go
 drop table oldlike
 go
+
+delete from User where username!='admin' and username!='ori' and username!='www'

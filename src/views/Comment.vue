@@ -2,9 +2,9 @@
   <div>
     <Navigator return="comment" />
     <div class="comment" v-for="item in allcomments.data" :key="item.id">
-        <div class="user">
+        <div style="display:flex" class="user">
           <el-avatar :src="item.face"></el-avatar>
-          <span class="name" @click="tohisinfo(item.userid)">{{ item.userid }}</span>
+          <div class="name" @click="tohisinfo(item.userid)">{{ item.userid }}</div>
         </div>
         <p>{{ item.content }}</p>
         <p class="time">{{ item.time }}</p>
@@ -64,7 +64,7 @@ export default {
     showallcomments() {
        var that = this;
         axios
-        .post("http://127.0.0.1:5000/allcomments", {
+        .post("http://175.24.53.216:5000/allcomments", {
           blogid: this.blog_id
         })
         .then(function(response) {

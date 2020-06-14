@@ -162,7 +162,7 @@ export default {
     followhim() {
       var that = this;
       axios
-        .post("http://127.0.0.1:5000/followhim", {
+        .post("http://175.24.53.216:5000/followhim", {
           hisname: that.uname,
           myname: global.username
         })
@@ -171,12 +171,8 @@ export default {
           {
             that.followflag=true;
             that.fansnum+=1;
-            alert(response.data.msg)
           }
-          else
-          {
-            alert(response.data.msg)
-          }
+          that.$message(response.data.msg);
         })
         .catch(function(error) {
           alert(error);
@@ -185,7 +181,7 @@ export default {
     disfollowhim() {
       var that = this;
       axios
-        .post("http://127.0.0.1:5000/disfollowhim", {
+        .post("http://175.24.53.216:5000/disfollowhim", {
           hisname: that.uname,
           myname: global.username
         })
@@ -194,12 +190,8 @@ export default {
           {
             that.followflag=false;
             that.fansnum-=1;
-            alert(response.data.msg)
           }
-          else
-          {
-            alert(response.data.msg)
-          }
+          that.$message(response.data.msg);
         })
         .catch(function(error) {
           alert(error);
@@ -208,7 +200,7 @@ export default {
     checkfollow() {
       var that = this;
       axios
-        .post("http://127.0.0.1:5000/checkfollow", {
+        .post("http://175.24.53.216:5000/checkfollow", {
           hisname: that.uname,
           myname: global.username
         })
@@ -235,7 +227,7 @@ export default {
     gethisblogs() {
       var that = this;
       axios
-        .post("http://127.0.0.1:5000/allhisblog", {
+        .post("http://175.24.53.216:5000/allhisblog", {
           username: that.uname
         })
         .then(function(response) {
@@ -257,7 +249,7 @@ export default {
     getinfo(){
       var that = this;
       axios
-        .post("http://127.0.0.1:5000/getinfo", {
+        .post("http://175.24.53.216:5000/getinfo", {
           username: that.uname,
         })
         .then(function(response) {

@@ -71,7 +71,7 @@ export default {
       if (valid) {
       var that = this;
       axios
-        .post("http://127.0.0.1:5000/signin", that.login_form)
+        .post("http://175.24.53.216:5000/signin", that.login_form)
         .then(function(response) {
           alert(response.data.msg);
           if (response.data.msg == "登录成功!") {

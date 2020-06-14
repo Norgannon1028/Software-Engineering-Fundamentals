@@ -28,9 +28,6 @@
       <el-button type="primary" @click="blog_post">
         发表
       </el-button>
-      <el-button @click="$save">
-        保存
-      </el-button>
     </el-form>
   </div>
 </template>
@@ -39,6 +36,7 @@
 import axios from "axios";
 import Navigator from "@/components/Navigator.vue";
 import global from "@/components/global.vue";
+import jwt_decode from 'jwt-decode';
 export default {
   name: "Write",
   components: {
@@ -58,10 +56,23 @@ export default {
   },
   created() {
     this.draft_id = parseInt(this.$route.params.id);
+    console.log(this.$store.getters.getToken);
+    if(this.$store.getters.getToken){
+      const decoded = jwt_decode(this.$store.getters.getToken);
+      console.log(decoded);
+      global.loginflag=true;
+      global.username=decoded.name;
+      global.avatar=decoded.avatar;
+      global.userid=decoded.id;
+      
+    }
+    if(!global.loginflag){
+      this.$router.push({ name: "Home"});
+    }
     var that=this;
     if(this.draft_id!=0){
       axios
-        .post("http://localhost:5000/getdraft", {
+        .post("http://175.24.53.216:5000/getdraft", {
           draftid: that.draft_id,
           userid: global.userid
         })
@@ -84,9 +95,13 @@ export default {
   },
   methods: {
     blog_post() {
+      if(this.title.length==0||this.keyword.length==0){
+        this.$message("请填写标题和关键词");
+        return;
+      }
       var that = this;
       axios
-        .post("http://127.0.0.1:5000/write", {
+        .post("http://175.24.53.216:5000/write", {
           userid: that.userid,
           md: that.mdStr,
           title: that.title,
@@ -111,7 +126,7 @@ export default {
            formdata.append('userid',that.userid);
            formdata.append('file', $file);
            axios
-          .post("http://127.0.0.1:5000/upload", formdata)
+          .post("http://175.24.53.216:5000/uploadavatar", formdata)
           .then(function(response) {
             that.$refs.md.$img2Url(pos,response.data.image_url);
           })
@@ -120,9 +135,13 @@ export default {
           });
       },
       $save(){
+        if(this.title.length==0||this.keyword.length==0){
+        this.$message("请填写标题和关键词");
+        return;
+      }
         var that = this;
         axios
-        .post("http://127.0.0.1:5000/savedraft", {
+        .post("http://175.24.53.216:5000/savedraft", {
           userid: that.userid,
           md: that.mdStr,
           title: that.title,
@@ -130,7 +149,7 @@ export default {
           draftid: that.draft_id
         })
         .then(function(response) {
-          alert(response.data.msg);
+          that.$message(response.data.msg);
         })
         .catch(function(error) {
           alert(error);

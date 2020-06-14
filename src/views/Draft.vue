@@ -71,7 +71,7 @@ export default {
     findalldraft() {
       var that = this;
       axios
-        .post("http://127.0.0.1:5000/getalldraft", {
+        .post("http://175.24.53.216:5000/getalldraft", {
           userid: that.userid
         })
         .then(function(response) {

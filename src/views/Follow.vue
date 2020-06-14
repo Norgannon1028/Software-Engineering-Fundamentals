@@ -9,14 +9,12 @@
         v-for="item in allfollows.data"
         :key="item.id"
       >
-      <br />
       <div @click="tohisinfo(item.username)" class="box">
         <p class="touch">用户名：{{ item.username }}</p>
         <p>邮箱：{{ item.email }}</p>
         <p v-if="item.sex==1">性别：男</p>
         <p v-if="item.sex==0">性别：女</p>
         <p>年龄：{{ item.old }}</p>
-        <br />
       </div>
     </div>
   </div>
@@ -73,7 +71,7 @@ export default {
     showallfollows() {
        var that = this;
         axios
-        .post("http://127.0.0.1:5000/allfollows", {
+        .post("http://175.24.53.216:5000/allfollows", {
            username: this.username
         })
         .then(function(response) {
@@ -99,13 +97,15 @@ export default {
 }
 .box { 
     border: 1px solid #DCDFE6;
-    margin: 10px auto;
     padding: 10px 35px 15px 35px;
+    float:left;
+    margin-left: 5px;
     border-radius: 5px;
     -webkit-border-radius: 5px;
     -moz-border-radius: 5px;
     box-shadow: 0 0 5px #909399;
-    opacity: 1
+    opacity: 1;
+    width:20%
   }
   .touch{
     cursor: pointer;

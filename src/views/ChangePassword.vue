@@ -23,7 +23,7 @@
           <el-input type="password" v-model="change_form.passwd2"></el-input>
         </el-form-item>
         <el-form-item>
-          <el-button class="submitBtn" type="primary" @click="change()">确认修改</el-button>
+          <el-button class="submitBtn" type="primary" @click="change('change_form')">确认修改</el-button>
         </el-form-item>
       </el-form>
     </div>
@@ -93,10 +93,13 @@ export default {
     };
   },
   methods: {
-    change() {
-      var that = this;
+    change(formName) {
+      this.$refs[formName].validate(valid => {
+        if (valid) {
+             console.log('yes submit!!')
+             var that = this;
       axios
-        .post("http://127.0.0.1:5000/changepassword", {
+        .post("http://175.24.53.216:5000/changepassword", {
           username: that.change_form.uname,
           oldpassword: that.change_form.oldpassword,
           password: that.change_form.passwd1,
@@ -109,6 +112,12 @@ export default {
         .catch(function(error) {
           alert(error);
         });
+        } else {
+          console.log('no submit!!')
+          return false
+        }
+    })
+      
     }
   }
 };

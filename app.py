@@ -12,9 +12,8 @@ import random
 import string
 import base64
 import requests
-import mimetypes
 
-app = Flask(__name__,template_folder="src/views",static_folder='./src/assets/static')
+app = Flask(__name__,template_folder="src/views",static_folder='./static')
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///Blog.db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = True
 app.secret_key = '\xc9ixnRb\xe40\xd4\xa5\x7f\x03\xd0y6\x01\x1f\x96\xeao+\x8a\x9f\xe4'
@@ -762,7 +761,7 @@ def allfollows():
         #print(db.session.query(Blog).join(User, User.id==Blog.userid))
         follows=db.session.query(Follow).filter(Follow.fromid==userid).all()
         for follow in follows:
-            followerid=follow.fromid
+            followerid=follow.toid
             follower=User.query.filter(User.id==followerid).first()
             follower=follower.to_dict()
             response['follower'+str(i)]=follower
@@ -920,7 +919,7 @@ def up_file():
     file = request.files.get('file')
     id=int(request.form["userid"])
     print(id)
-    path = "./src/assets/static/"
+    path = "./static/"
     file_path = path+file.filename
     file.save(file_path)
     print('上传文件成功，上传的用户是：')
@@ -950,7 +949,7 @@ def download_file():
     try:
         filename = request.json.get('filename')
         url = request.json.get('url')
-        response = make_response(send_from_directory('./src/assets/static', filename, as_attachment=True))
+        response = make_response(send_from_directory('./static', filename, as_attachment=True))
         response.headers["Content-Disposition"] = "attachment; filename={}".format(file_name.encode().decode('latin-1'))
         return response
     except Exception as err:

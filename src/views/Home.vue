@@ -194,7 +194,7 @@ export default {
     recommendblog(recommendway) {
       var that = this;
       axios
-        .post("http://localhost:5000/recommend", {
+        .post("http://175.24.53.216:5000/recommend", {
           recommendway: recommendway
         })
         .then(function(response) {
@@ -219,7 +219,7 @@ export default {
       this.recommendret={}
       var that = this;
       axios
-        .post("http://localhost:5000/searchblog", {
+        .post("http://175.24.53.216:5000/searchblog", {
           searchkey: that.searchkey,
           searchway: searchway,
           searchkind: that.searchkind
@@ -237,7 +237,7 @@ export default {
       this.recommendret={}
       var that = this;
       axios
-        .post("http://localhost:5000/searchblog", {
+        .post("http://175.24.53.216:5000/searchblog", {
           searchkey: that.searchkey,
           searchway: searchway,
           searchkind: that.searchkind

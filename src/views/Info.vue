@@ -11,7 +11,7 @@
       <div class="img-box"> 
       <el-upload
         class="avatar-uploader"
-        action="http://127.0.0.1:5000/uploadavatar"
+        action="http://175.24.53.216:5000/uploadavatar"
         :http-request="customUpload"
         :show-file-list="false"
         :before-upload="beforeAvatarUpload">
@@ -40,7 +40,7 @@
       <el-button
         class="submitBtn"
         type="primary"
-        @click="confirm()"
+        @click="confirm('info_form')"
         >确认
       </el-button>
       <el-button style="margin-left:0px;margin-top:5px" @click="tomyinfo()">取消</el-button>
@@ -68,9 +68,22 @@ export default {
       global.username=decoded.name;
       global.avatar=decoded.avatar;
       global.userid=decoded.id;
+      this.image_url=global.avatar;
     }
   },
   data() {
+    const isNum = (rule, value, callback) => {
+      const age= /^[0-9]*$/
+      if (!age.test(value)) {
+        callback(new Error('年龄只能为数字'))
+      }
+      if(parseInt(value)<=0||parseInt(value)>=99){
+        callback(new Error('请输入0-99之间的数字'))
+      }
+      else{
+        callback()
+      }
+    };
     return {
       sex:"1",
       info_form:{
@@ -79,7 +92,7 @@ export default {
       rules:{
         age:[
           { required: true, message: '请输入0-99之间的数字', trigger: 'blur' },
-          { min: 1, max: 2, message: '请输入0-99之间的数字', trigger: 'blur' }
+          { validator: isNum, trigger: 'blur' } 
         ],
          sex: [
            { required: true, message: '请输入0或1', trigger: 'blur' },
@@ -115,7 +128,7 @@ export default {
     gethisblogs() {
       var that = this;
       axios
-        .post("http://127.0.0.1:5000/allhisblog", {
+        .post("http://175.24.53.216:5000/allhisblog", {
           username: that.uname
         })
         .then(function(response) {
@@ -128,7 +141,7 @@ export default {
     getinfo(){
       var that = this;
       axios
-        .post("http://127.0.0.1:5000/getinfo", {
+        .post("http://175.24.53.216:5000/getinfo", {
           username: that.uname,
         })
         .then(function(response) {
@@ -143,10 +156,13 @@ export default {
           alert(error);
         });
     },
-    confirm() {
-      var that = this;
+    confirm(formName) {
+      this.$refs[formName].validate(valid => {
+        if (valid) {
+             console.log('yes submit!!');
+             var that = this;
         axios
-          .post("http://127.0.0.1:5000/info", {
+          .post("http://175.24.53.216:5000/info", {
             username: that.uname,
             age: that.info_form.age,
             sex: that.sex,
@@ -160,6 +176,12 @@ export default {
           .catch(function(error) {
             alert(error);
           });
+        } else {
+          console.log('no submit!!');
+          return false
+        }
+    })
+      
       },
     handleAvatarSuccess(response,file) {
        console.log("111")
@@ -194,7 +216,7 @@ export default {
         param.append('file',fileobj.file);
         var that= this;
         axios
-        .post("http://127.0.0.1:5000/uploadavatar", param)
+        .post("http://175.24.53.216:5000/uploadavatar", param)
         .then(function(res) {
           that.image_url=res.data.image_url;
           console.log(res.data.image_url);

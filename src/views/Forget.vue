@@ -23,7 +23,7 @@
           <el-input v-model="rep_form.code"></el-input>
         </el-form-item>
         <el-form-item>
-          <el-button class="submitBtn" type="primary" @click="repassword()">重置密码</el-button>
+          <el-button class="submitBtn" type="primary" @click="repassword('rep_form')">重置密码</el-button>
         </el-form-item>
       </el-form>
     </div>
@@ -74,8 +74,7 @@ export default {
           { type: 'email', message: '请输入正确的邮箱地址', trigger: ['blur', 'change'] }
         ],
         code:[
-          { required: true, message: '请输入验证码', trigger: 'blur' },
-          { validator: checkcode, trigger: 'change'  }
+          { required: true, message: '请输入验证码', trigger: 'blur' }
         ]
       },
       send_status:false,
@@ -84,10 +83,20 @@ export default {
     };
   },
   methods: {
-    repassword() {
-      var that = this;
+    repassword(formName) {
+      if(this.send_status){
+        return;
+      }
+      this.$refs[formName].validate(valid => {
+        if (valid) {
+          if(this.code!=parseInt(this.rep_form.code)){
+              this.$message.error('验证码错误');
+              return;
+          }
+             console.log('yes submit!!')
+             var that = this;
       axios
-        .post("http://127.0.0.1:5000/repassword", {
+        .post("http://175.24.53.216:5000/repassword", {
           username: that.rep_form.uname,
           email: that.rep_form.email
         })
@@ -99,12 +108,17 @@ export default {
         .catch(function(error) {
           alert(error);
         });
+        } else {
+          return false
+        }
+    })
+      
     },
     verify(){
       var that=this;
       that.code=Math.floor(Math.random() * (999999 - 100000) + 100000);
       axios
-        .post("http://127.0.0.1:5000/verification", {
+        .post("http://175.24.53.216:5000/verification", {
           email: that.rep_form.email,
           code:that.code
         })

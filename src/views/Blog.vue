@@ -6,6 +6,7 @@
       <div id="artcle-info">
         <h2 class="text-center"><strong>{{blog_title}}</strong></h2>
         <div class="text-center timeAndView">
+            <div>
 						<span class="article-time">
 							<i class="el-icon-time"></i>
 							{{ blog_time }}
@@ -15,10 +16,12 @@
 							<i class="el-icon-star-off"></i>
 							被赞数：{{ blog_like }}
 						</span>
-            <span style="float:right;">
-              <el-avatar :src="this.blog_authorface"></el-avatar>
-              <span class="touch" style="margin-left:10px;vertical-align:top;" @click="tohisinfo(blog_author)">{{ blog_author }}</span>
-            </span>
+            </div>
+            <div style="float:right;display:flex">
+              <el-avatar class="user-img" :src="this.blog_authorface"></el-avatar>
+              <br>
+              <div class="name" @click="tohisinfo(blog_author)">{{ blog_author }}</div>
+            </div>
             <br>
           </div>
           <p class="abstract">
@@ -39,10 +42,9 @@
       <br />
       <br />
       <div class="comment" v-for="item in showcomment.data" :key="item.id">
-        
-        <div class="user">
+        <div style="display:flex" class="user">
           <el-avatar :src="item.face"></el-avatar>
-          <div class="touch" @click="tohisinfo(item.userid)">{{ item.userid }}</div>
+          <div class="name" @click="tohisinfo(item.userid)">{{ item.userid }}</div>
         </div>
         <p>{{ item.content }}</p>
         <p class="time">{{ item.time }}</p>
@@ -50,10 +52,14 @@
       </div>
       <br />
       <br />
+      <div style="text-align:center">
+      <el-button type="primary" @click="likefunc">{{liketext}}</el-button>
       <el-button type="primary" @click="showallcomment(blog_id)">查看评论</el-button>
       <el-button type="primary" @click="writecomment">发表评论</el-button>
+      </div>
       <br />
       <br />
+      <div style="text-align:center">
       <el-input
         type="comment"
         placeholder="在此输入评论内容"
@@ -62,10 +68,13 @@
         class="input-with-select"
         v-if="writingcomment==true"
       ></el-input>
+      </div>
       <br />
       <br />
+      <div style="text-align:center">
       <el-button type="primary" v-if="writingcomment==true" @click="finishcomment">确认</el-button>
       <el-button v-if="writingcomment==true" @click="stopwriting">取消</el-button>
+      </div>
     </div>
   </div>
 </template>
@@ -95,6 +104,7 @@ export default {
       blog_keyword:'',
       blog_authorface:'',
       likeflag:false,
+      liketext:"点赞",
       writingcomment:false,
       comment:"",
       showcomment:{}
@@ -113,11 +123,12 @@ export default {
     }
     var that=this;
     axios
-        .post("http://127.0.0.1:5000/getblog", {
+        .post("http://175.24.53.216:5000/getblog", {
           blogid: that.blog_id,
           thisuser: global.userid
         })
         .then(function(response) {
+          
           that.blog_id=response.data.blog.id
           that.blog_title=response.data.blog.title;
           that.blog_author=response.data.writer;
@@ -127,12 +138,17 @@ export default {
           that.blog_keyword=response.data.blog.keyword;
           that.blog_authorface=response.data.face;
           that.likeflag=response.data.likeflag;
+          console.log(response.data);
+          console.log(that.likeflag);
+          if(that.likeflag==true){
+            that.liketext="撤销点赞";
+          }
         })
         .catch(function(error) {
           alert(error);
         });
       axios
-        .post("http://127.0.0.1:5000/loadcomments", {
+        .post("http://175.24.53.216:5000/loadcomments", {
           blogid: that.blog_id
         })
         .then(function(response) {
@@ -141,6 +157,8 @@ export default {
         .catch(function(error) {
           alert(error);
         });
+        
+        
     
    // this.loadcomments();     
   },
@@ -197,20 +215,18 @@ export default {
       {
         var that=this;
         axios
-          .post("http://127.0.0.1:5000/addcomment", {
+          .post("http://175.24.53.216:5000/addcomment", {
             blogid: that.blog_id,
             thisuser: global.userid,
             commenttext: that.comment
           })
           .then(function(response) {
             // alert(response.data.msg)
-            if(response.data.msg=="评论成功！")
-            {
-              alert(response.data.msg)
+            if(response.data.msg=="评论成功！"){
+              that.$message(response.data.msg);
             }
-            else
-            {
-              alert("点赞失败，请稍后重试")
+            else{
+              that.$message("评论失败，请稍后重试");
             }
           })
           .catch(function(error) {
@@ -220,7 +236,7 @@ export default {
         this.writingcomment=false;
       }
       axios
-        .post("http://127.0.0.1:5000/loadcomments", {
+        .post("http://175.24.53.216:5000/loadcomments", {
           blogid: that.blog_id
         })
         .then(function(response) {
@@ -230,10 +246,22 @@ export default {
           alert(error);
         });
     },
+    likefunc(){
+      if(global.loginflag!=true){
+        this.$message("请先登录");
+        return;
+      }
+      if(!this.likeflag){
+        this.likethisbolg();
+      }
+      else{
+        this.dislikethisbolg();
+      }
+    },
     likethisbolg() {
       var that=this;
       axios
-        .post("http://127.0.0.1:5000/addlike", {
+        .post("http://175.24.53.216:5000/addlike", {
           blogid: that.blog_id,
           thisuser: global.userid
         })
@@ -243,10 +271,12 @@ export default {
           {
             that.blog_like+=1;
             that.likeflag=true;
+            that.liketext="撤销点赞";
+            that.$message("点赞成功");
           }
           else
           {
-            alert("点赞失败，请稍后重试")
+            that.$message("点赞失败，请稍后重试");
           }
         })
         .catch(function(error) {
@@ -256,7 +286,7 @@ export default {
     dislikethisbolg() {
       var that=this;
       axios
-        .post("http://127.0.0.1:5000/dislike", {
+        .post("http://175.24.53.216:5000/dislike", {
           blogid: that.blog_id,
           thisuser: global.userid
         })
@@ -266,10 +296,12 @@ export default {
           {
             that.blog_like-=1;
             that.likeflag=false;
+            that.liketext="点赞";
+            that.$message("已取消点赞");
           }
           else
           {
-            alert("取消点赞失败，请稍后重试")
+            that.$message("取消点赞失败，请稍后重试");
           }
         })
         .catch(function(error) {
@@ -282,7 +314,7 @@ export default {
     searchblog() {
       var that = this;
       axios
-        .post("http://127.0.0.1:5000/blog", {
+        .post("http://175.24.53.216:5000/blog", {
           searchkey: that.searchkey
         })
         .then(function(response) {
@@ -359,6 +391,15 @@ export default {
     cursor: pointer;
   }
   .touch:hover{
+    padding-left: 10px;
+		color: #409EFF;
+  }
+  .name{
+    margin-top:10px ;
+    margin-left: 5px;
+    cursor: pointer;
+  }
+  .name:hover{
     padding-left: 10px;
 		color: #409EFF;
   }
